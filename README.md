@@ -41,7 +41,10 @@ The account you install everything on should be a non admin account with the abi
     *   a user name which creates a folder with the same name in /mnt/ssd2/colabfold where the results will be stored
     *   a token
         +   these are stored in tokens/registered_tokens.txt
-        +   **one token can only queue 3 jobs so the server can't get overfilled with requests**
-        +   **the server accepts only 10 queued jobs - after that new submissions will be blocked until less than 10 jobs are queued**
 *   downloading the results with the right user name from downloads
-
+### Indentional restrictions
+  +   one token can only queue **3 jobs** so the server can't get overfilled with requests
+  +   the server accepts only **10 queued jobs** - after that new submissions will be blocked until less than 10 jobs are queued
+      +   this can be changed in https://github.com/ugSUBMARINE/local-colabfold-server/blob/5192bd434d5a65b0bc89f782bb7ab3666ab4b87f/loc_production_server/pre_app.py#L89-L90  
+  +   one fasta file can only contain a maximum of **3 sequence (header)**
+      +   this can be changed with adding ` ,max_protein=N` at https://github.com/ugSUBMARINE/local-colabfold-server/blob/5192bd434d5a65b0bc89f782bb7ab3666ab4b87f/loc_production_server/pre_app.py#L201
