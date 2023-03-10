@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+document.getElementById("wholebody").className = "vader_base";
+</script>
+<div class="surround">
+<h1>You successfully submitted a job</h1>
+<div style="font-size:100px">&#128640</div>
+<div class="quote">"Never tell me the odds." - Han Solo</div><br />
+<div>When your job is finished it will be available in the <strong><a class="link" href="/download">download</a></strong> page</div>
+<div>The file will have the same name as your input file with the submission date added</div>
+<div>Please check continuously if your protein is ready</div>
+</div>
+{% endblock %}

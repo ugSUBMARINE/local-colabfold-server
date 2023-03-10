@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+document.getElementById("wholebody").className = "vader_show";
+</script>
+<div class="surround"> 
+<h1>Houston, we have a problem</h1>
+<div style="font-size:100px">&#x1F6F8</div>
+<div class="quote">"Easy is the path to wisdom for those only not blinded by themselves." - Broadside</div><br />
+<div>Either no input was given or the file was not a <strong>.fasta</strong> file</div>
+<div>Try again</div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+function validateForm() {
+  var x = document.forms["UserDownload"]["user"].value;
+  if (x == "" || x == null) {
+    alert("User must be filled out");
+    return false;
+  }
+}
+</script>
+<script>
+document.getElementById("wholebody").className = "vader_think";
+</script>
+
+<div class="dynamic_surround">
+<h1>Select User</h1>
+<div style="font-size:100px">👨‍🚀</div>
+<div class="quote">"Reality doesn't care if you believe it." - Boba Fett</div><br />
+<FORM name="UserDownload" action="download" method="POST" enctype="text">
+<label for="user">User</label>
+<input type="text" id="user" name="user" required><br /><br />
+<button class="button">Submit</button>
+</FORM>
+</div>
+{% endblock %}

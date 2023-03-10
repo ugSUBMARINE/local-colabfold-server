@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+document.getElementById("wholebody").className = "vader_base";
+</script>
+<div class="surround", style="text-align:left;">
+<h1>User Guide</h1>
+<div style="font-size:100px">&#x1F4DC</div>
+<div class="quote">"Lesson one from this experience: Realize how much you don't know. Lesson two: Make sure to learn from lesson one." - Jacen Solo</div><br />
+<div>The following steps need to be taken to fold a protein sequence:</div>
+    <dl class"guid_list">
+        <dt><strong>*</strong> Upload your protein sequence as a fasta file at <strong><a class="link" href="/upload">Upload</a></strong></dt>
+        <dd>- <strong>The file must be a .fasta file</strong><dd>
+        <dd>- Beside letters and numbers '-', '.' and '_' are the only allowed characters in the file name - no spaces</dd>
+        <dd>- Multimers need ':' as chain breaks like MASDFGH:KLERWQ</dd>
+        <dd>- The maximum length of the file name (excluding .fasta) is <strong>15</strong> characters</dd>
+        <dd>- Please submit only <strong>one</strong> protein at a time</dd>
+        <dd>- Example fasta files can be download at <strong><a class="link" href="/example">Example</a></strong></dd>
+        <dt><strong>*</strong> Please enter a user name you will <strong>remember</strong></dt>
+        <dd>- <strong>Without your user name you won't be able to retrieve your results</strong></dd>
+        <dd>- Beside letters and numbers '-', '.' and '_' are the only allowed characters in the user name - no spaces</dd>
+        <dt><strong>*</strong> Enter a valid token</dt>
+        <dd>- One token can queue a maximum of three jobs </dd>
+        <dt><strong>*</strong> Select the number of structures you want to be calculated</dt>
+        <dt><strong>*</strong> Choose whether to relax your structures with amber </dt>
+        <dt><strong>*</strong> Choose the number of recycles</dt>
+        <dd>- Usually auto determines the needed number well but for artificial proteins a higher set number might help</dd>
+        <dt><strong>*</strong> After submission your job will be queued and started when the resources are available</dt>
+        <dt><strong>*</strong> When your sequence is folded you can find it with the same name as your fasta file in <strong><a class="link" href="/download">Download</a></strong></dt>
+    </dl>
+    <p><strong>Download your results when they are finished - they will be <font color="red">deleted</font> without consideration after one week</strong></p>
+</div>
+{% endblock %}

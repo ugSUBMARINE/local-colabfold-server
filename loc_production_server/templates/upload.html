@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+function validateForm() {
+  var x = document.forms["Upload"]["user"].value;
+  if (x == "" || x == null) {
+    alert("User must be filled out");
+    return false;
+  }
+  var x = document.forms["Upload"]["token_in"].value;
+  if (x == "" || x == null) {
+    alert("Token must be filled out");
+    return false;
+  }
+}
+</script>
+
+<script>
+document.getElementById("wholebody").className = "vader_think";
+</script>
+ 
+<div class="dynamic_surround">
+<h1>Fasta File Upload</h1>
+<div style="font-size:100px" >&#x1F4DD</div>
+<div class="quote">"As long as there's light, we've got a chance." - Poe Dameron</div><br />
+<FORM name="upload" action="/upload" method="POST" enctype="multipart/form-data">
+<div>
+<label style="font-family:Courier New"> File: </label>
+<input style="font-family:Courier New" type="file" id="file" name="file" />
+</div>
+<br /><br />
+<div>
+<label for="user">USER&nbsp</label>
+<input type="text" id="user" name="user" required>
+</div>
+<div>
+<label for="token_in">TOKEN</label>
+<input type="text" id="token_in" name="token_in" required>
+</div>
+<br />
+<div>
+<label for="num_models">Number of structures</label>
+<select name="num_models" id="num_models">
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3" selected>3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+</select>
+</div>
+<br />
+<div>
+<label for="amber_relax">Use amber relax</label>
+<input type="checkbox" id="amber_relax" name="amber_relax" value="amber_relax">
+</div>
+<br />
+<div>
+<label for="num_recycles">Number of recycles</label>
+<select name="num_recycles" id="num_recycles">
+  <option value="auto" selected>auto</option>
+  <option value="1">1</option>
+  <option value="3">3</option>
+  <option value="6">6</option>
+  <option value="12">12</option>
+  <option value="24">24</option>
+  <option value="48">48</option>
+</select> <br /><br />
+</div>
+<br />
+<div>
+<button class="button">Submit</button>
+</div>
+</FORM>
+</div>
+ 
+{% endblock %}

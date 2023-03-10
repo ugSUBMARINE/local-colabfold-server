@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+document.getElementById("wholebody").className = "vader_show";
+</script>
+<div class="surround">
+<h1>You have exceeded the internal limit of protein sequence submissions</h1>
+<div style="font-size:100px">&#x1F93A</div>
+<div class="quote">"Who I am is not important; my message is." Darth Revan</div><br />
+<div>Change your fasta file to a maximum of <strong>3</strong> protein sequences at a time<strong>!</strong></div>
+</div>
+{% endblock %}
