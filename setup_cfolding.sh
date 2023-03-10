@@ -12,6 +12,7 @@ uname=$(whoami)
 # check git and wget installation
 type git || { echo "git not installed. Please install git first" ; exit 1 ; }
 type wget || { echo "wget not installed. Please install wget first" ; exit 1 ; }
+type nohup || { echo "nohup not installed. Please install wget first" ; exit 1 ; }
 
 if [ "$check_openssh" -eq "0" ]; then
     # check installation of openssh-server for remote access
