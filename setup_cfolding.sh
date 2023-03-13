@@ -5,6 +5,7 @@
 add_cronjobs=0
 mount_drives=0
 storage_dir="/mnt/ssd2"
+pid_storage_dir=""
 check_openssh=0
 ################### END PARAMETERS ###################################
 
@@ -83,7 +84,9 @@ if [ $g_ret -ne 0 ];then
 fi
 echo ""
 echo "Setting up the scheduler"
-bash "$HOME/job-scheduler-bash/setup.sh"
+cd job-scheduler-bash
+chmod +x "$HOME/job-scheduler-bash/setup.sh"
+bash -c "$HOME/job-scheduler-bash/setup.sh ${pid_storage_dir}"
 
 # installation of miniconda
 if ! conda --version >/dev/null; then
