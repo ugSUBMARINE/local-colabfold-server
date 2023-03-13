@@ -1,7 +1,4 @@
 import os
-import re
-import shutil
-import subprocess
 from flask import (
     Flask,
     request,
@@ -10,76 +7,22 @@ from flask import (
     url_for,
     send_from_directory,
     send_file,
-    escape,
     flash,
 )
-from werkzeug.utils import secure_filename
-from datetime import datetime
 
 from tokengenerator import add_used, check_used_token, check_token_valid
+from app_utils import (
+    gen_key,
+    get_key,
+    allowed_file,
+    allowed_string,
+    fasta_check,
+    remove_token_after_crash,
+    add_string,
+    ip_log,
+)
 
-ALLOWED_EXTENSIONS = set(["fasta"])
-
-
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-def allowed_string(
-    in_string: str, info: str, token_as: str = None, remove_token: bool = False
-):
-    if in_string is None:
-        info = "Input is None"
-        return False, None
-    else:
-        in_string = str(in_string)
-        check = bool(re.match("^[A-Za-z0-9_-]+[A-Za-z0-9_.-]*$", in_string))
-    if not check:
-        flash(info)
-        if remove_token:
-            os.system(f"python3 tokenremove.py --token {token_as}")
-        return False, None
-    else:
-        return True, secure_filename(escape(in_string))
-
-
-def fasta_check(fasta_path: str, max_protein: int = 3):
-    """check fasta file for number of sequences"""
-    header_count = 0
-    with open(fasta_path, "r") as fasta:
-        for i in fasta:
-            if i.startswith(">"):
-                header_count += 1
-            if header_count > max_protein:
-                return 2
-    if header_count == 0:
-        return 1
-    elif header_count > max_protein:
-        return 2
-    return 0
-
-
-def remove_token_after_crash(token_in):
-    os.system(f"python3 tokenremove.py --token {token_in}")
-
-
-def add_string(nmodels: str, amber_rel: str, nrecyles: str):
-    """get additional setting in the colabfold call string"""
-    nmodels_add = f"--num-models {nmodels}"
-    amber_rel_add = ""
-    if amber_rel == "amber_relax":
-        amber_rel_add = f" --amber --use-gpu-relax"
-    nrecyles_add = ""
-    if nrecyles != "auto":
-        nrecyles_add = f" --num-recycle {nrecyles}"
-    return " " + nmodels_add + amber_rel_add + nrecyles_add + " --zip"
-
-
-def ip_log(req, access, fpath="log_files"):
-    ip_addr = req.environ.get("HTTP_X_FORWARDED_FOR", req.remote_addr)
-    with open(os.path.join(fpath,"ip.log"), "a+") as iplog:
-        ip_string = f"{datetime.now().strftime('%d%m%y_%H%M%S')},{ip_addr},{access}\n"
-        iplog.write(ip_string)
+from datetime import datetime
 
 
 def create_app():
@@ -92,7 +35,14 @@ def create_app():
     if not os.path.isdir(log_path):
         os.mkdir(log_path)
 
-    app.secret_key = b'_7#t9k"w2F5z\n\xec]/'
+    # clear used tokens on app startup
+    with open("tokens/used_tokens.txt", "w+") as utok:
+        pass
+
+    # generates secret_key if not present
+    gen_key(dir_name=log_path)
+    # read secret_key
+    app.secret_key = get_key()
 
     @app.errorhandler(404)
     def page_not_found(error):
@@ -146,25 +96,32 @@ def create_app():
     @app.route("/upload", methods=["GET", "POST"])
     def upload():
         ip_log(request, "upload")
+        # number of currently running/scheduled jobs
         num_proc = sum(1 for line in open("/var/pid_storage/pid_store.txt"))
         if num_proc >= max_jobs:
             return redirect(url_for("busy"))
         if request.method == "POST":
+            # get file
             file = request.files["file"]
-
+            # get token
             token = request.form.get("token_in")
-
+            # check token safety
             t_check, _ = allowed_string(token, info="Insecure Token")
+            # token safe?
             if not t_check:
                 return redirect(url_for("upload"))
+            # token valid?
             if not check_token_valid(token):
                 flash("Invalid Token")
                 return redirect(url_for("upload"))
+            # token usage?
             if not check_used_token(token, max_tokens):
                 return redirect(url_for("overused_token"))
-
+            # valid file?
             if file and allowed_file(file.filename):
+                # add token to currently used ones
                 add_used(token)
+                # user
                 user_dir = request.form.get("user")
                 u_check1, sec_user_dir = allowed_string(
                     user_dir,
@@ -172,10 +129,12 @@ def create_app():
                     token_as=token,
                     remove_token=True,
                 )
+                # user name safe?
                 if not u_check1:
                     remove_token_after_crash(token)
                     return redirect(url_for("upload"))
                 user_path = os.path.join(out_dir, sec_user_dir)
+                # user path safe?
                 if not os.path.isdir(user_path):
                     os.mkdir(user_path)
 
@@ -186,14 +145,18 @@ def create_app():
                     token_as=token,
                     remove_token=True,
                 )
+                # file name safe?
                 if not u_check2:
                     remove_token_after_crash(token)
                     return redirect(url_for("upload"))
+                # add date to filename and cut if to long
                 filename_pre = sec_filename.split(".")[0]
                 sec_filename = "".join(list(filename_pre)[:15])
                 new_name = f"{sec_filename}_{datetime.now().strftime('%d%m%y_%H%M%S')}"
+                # create output dir
                 dir_name = os.path.join(user_path, new_name)
                 os.mkdir(dir_name)
+                # save fasta file
                 new_filename = f"{new_name}.fasta"
                 fasta_loc = os.path.join(dir_name, new_filename)
                 file.save(fasta_loc)
@@ -207,7 +170,12 @@ def create_app():
                     os.system(f"rm -r {dir_name}")
                     remove_token_after_crash(token)
                     return redirect(url_for("exceeded"))
+                elif input_check == 3:
+                    os.system(f"rm -r {dir_name}")
+                    remove_token_after_crash(token)
+                    return redirect(url_for("exceeded"))
 
+                # check and get the additional_settings for colabfold
                 nmodels_in = request.form.get("num_models")
                 nm_check, sec_nmodels_in = allowed_string(
                     nmodels_in, info="Invalid number of models"
@@ -238,7 +206,7 @@ def create_app():
                 additional_settings = add_string(
                     sec_nmodels_in, sec_amberrel_in, sec_ncycles_in
                 )
-
+                # submit job
                 cfold_out = os.path.join(dir_name, "out")
                 scheduler_path = "/home/cfolding/.scheduler/schedule.sh"
                 colabfold_path = (
@@ -267,6 +235,7 @@ def create_app():
     def download():
         ip_log(request, "download")
         if request.method == "POST":
+            # get user name and redirect to its folder if safe and exists
             uname_in = request.form.get("user")
             d_check1, sec_uname = allowed_string(
                 uname_in, info="User name contains forbidden characters"
@@ -317,7 +286,8 @@ def create_app():
 
         files = [
             os.path.join(user_path_, i) for i in os.listdir(user_path_) if ".zip" in i
-            ]
+        ]
+        # sort files names in chronological order
         files.sort(key=os.path.getmtime)
         files = [os.path.split(i)[1] for i in files]
         files = files[::-1]
@@ -332,6 +302,7 @@ def create_app():
 
     @app.route("/example/<filename>")
     def example_file(filename):
+        # show example fasta files for download
         e_check, sec_filename = allowed_string(
             filename, info="File name contains forbidden characters"
         )
