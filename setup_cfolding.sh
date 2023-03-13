@@ -88,6 +88,8 @@ cd job-scheduler-bash
 chmod +x "$HOME/job-scheduler-bash/setup.sh"
 bash -c "$HOME/job-scheduler-bash/setup.sh ${pid_storage_dir}"
 
+cd $HOME
+
 # installation of miniconda
 if ! conda --version >/dev/null; then
     echo "Downloading Miniconda3 installer"
