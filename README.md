@@ -1,5 +1,7 @@
 # local-colabfold-server
 
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 This repository contains code to build a website on top of [localcolabfold](https://github.com/YoshitakaMo/localcolabfold) repository of [colabfold](https://github.com/sokrypton/ColabFold) that can be run on a local machine.
 It is meant to provide an easy access to the core functions of colabfold.
 The python version is based on the colabfold requirements **3.8.12**.
