@@ -214,15 +214,14 @@ def create_app():
                 )
                 folding = f"bash {scheduler_path} '{colabfold_path} {fasta_loc} {cfold_out} {additional_settings}'"
 
-                zipping = f"mv {cfold_out}/*.zip {dir_name}.zip"
-                removing = f"rm -r {dir_name}"
+                zipout = f"python3 zipping.py -f {dir_name} -d {dir_name}"
                 token_removing = f"python3 tokenremove.py --token {token}"
                 nohup_path = f"/mnt/ssd2/cf_nohup/{new_name}.out"
 
                 os.system(
                     "nohup sh -c "
                     + '"'
-                    + f"{folding} && {zipping} && {removing} ; {token_removing}"
+                    + f"{folding} && {zipout} ; {token_removing}"
                     + '"'
                     + f" > {nohup_path} &"
                 )

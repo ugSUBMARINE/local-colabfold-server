@@ -149,7 +149,7 @@ def add_string(nmodels: str, amber_rel: str, nrecyles: str):
     nrecyles_add = ""
     if nrecyles != "auto":
         nrecyles_add = f" --num-recycle {nrecyles}"
-    return " " + nmodels_add + amber_rel_add + nrecyles_add + " --zip"
+    return " " + nmodels_add + amber_rel_add + nrecyles_add
 
 
 def ip_log(req, access: str, fpath: str = "log_files"):
