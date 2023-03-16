@@ -221,7 +221,7 @@ def create_app():
                 os.system(
                     "nohup sh -c "
                     + '"'
-                    + f"{folding} && {zipout} ; {token_removing}"
+                    + f"{folding} ; {zipout} ; {token_removing}"
                     + '"'
                     + f" > {nohup_path} &"
                 )

@@ -5,11 +5,12 @@
 add_cronjobs=0
 mount_drives=0
 storage_dir="/mnt/ssd2"
-pid_storage_dir=""
+pid_storage_dir="/var/pid_storage/"
 check_openssh=0
 ################### END PARAMETERS ###################################
 
 uname=$(whoami)
+location="$(pwd)/"
 # check git and wget installation
 type git || { echo "git not installed. Please install git first" ; exit 1 ; }
 type wget || { echo "wget not installed. Please install wget first" ; exit 1 ; }
@@ -36,17 +37,36 @@ if [ "$mount_drives" -eq "0" ]; then
     fi
 fi
 
+base="${location}loc_production_server/"
+# changing storage directory in pre_app.py
 path_end="${storage_dir: -1}"
 if [ ! "$path_end" == "/" ];then
     storage_dir="${storage_dir}/"
 fi
+tmpsed=$(mktemp ./tmpstore.XXXXXX)
+sed "s+/mnt/ssd2/+${storage_dir}+" "${base}pre_app.py" > $tmpsed; mv "${base}pre_app.py" "${base}original_pre_app.py" ; mv $tmpsed "${base}pre_app.py"
 
-# changing storage directory in pre_app.py
-sed "s+/mnt/ssd2/+${storage_dir}+" loc_production_server/pre_app.py > tempsedfile ; mv loc_production_server/pre_app.py loc_production_server/original_pre_app.py ; mv tempsedfile loc_production_server/pre_app.py
+# changing pid storage directory in pre_app.py
+ppath_end="${pid_storage_dir: -1}"
+if [ ! "$ppath_end" == "/" ];then
+    pid_storage_dir="${pid_storage_dir}/"
+fi
+tmpsed=$(mktemp ./tmppid.XXXXXX)
+sed "s+/var/pid_storage/+${pid_storage_dir}+" "${base}pre_app.py" > $tmpsed; rm "${base}pre_app.py" ; mv $tmpsed "${base}pre_app.py"
+
+# changing colabfold directory in pre_app.py
+tmpsed=$(mktemp ./tmpcolab.XXXXXX)
+sed "s+/home/cfolding/colabfold_batch+${location}colabfold_batch+" "${base}pre_app.py" > $tmpsed; rm "${base}pre_app.py" ; mv $tmpsed "${base}pre_app.py"
+
+# changing home directory in pre_app.py for sheduler
+hpath="${HOME}/"
+tmpsed=$(mktemp ./tmphome.XXXXXX)
+sed "s+/home/cfolding/+${hpath}+" "${base}pre_app.py" > $tmpsed; rm "${base}pre_app.py" ; mv $tmpsed "${base}pre_app.py"
 
 # creating tokens
-cd loc_production_server
+cd "loc_production_server"
 python3 tokengenerator.py
+cd ..
 
 # creating needed directories
 if [ ! -d "$storage_dir/colabfold" ]; then
@@ -59,23 +79,7 @@ if [ ! -d "$storage_dir/cf_nohup" ]; then
     chmod +rwx "$storage_dir/cf_nohup"
 fi
 
-if [ "$add_cronjobs" -eq "0" ]; then
-    echo ""
-    echo "Adding cron jobs to automatically remove files older than a week"
-    echo "Assuming server app will be installed in /home/$uname/loc_production_server"
-    if ! crontab -l | grep "0 2 \* \* \* /home/$uname/.folding/clean.sh" -q; then
-        echo "Adding file cleaning"
-        (crontab -l ; echo "0 2 * * * /home/$uname/.folding/clean.sh") | crontab -
-    fi
-    if ! crontab -l | grep "0 \* \* \* \* /home/$uname/loc_production_server/clean_iplog.py" -q; then
-        echo "Adding iplog cleaning"
-        (crontab -l ; echo "0 * * * * /home/$uname/loc_production_server/clean_iplog.py") | crontab -
-    fi
-fi
-
-cd $HOME
-
-# cloning job scheduler
+# cloning job scheduler and installing it
 git clone https://github.com/gwirn/job-scheduler-bash.git
 g_ret=$?
 if [ $g_ret -ne 0 ];then
@@ -87,8 +91,6 @@ echo "Setting up the scheduler"
 cd job-scheduler-bash
 chmod +x "$HOME/job-scheduler-bash/setup.sh"
 bash -c "$HOME/job-scheduler-bash/setup.sh ${pid_storage_dir}"
-
-cd $HOME
 
 # installation of miniconda
 if ! conda --version >/dev/null; then
@@ -110,8 +112,7 @@ if ! conda --version >/dev/null; then
 fi
 
 echo "Downloading local colabfold installer script from its repository https://github.com/YoshitakaMo/localcolabfold to $HOME"
-mkdir -p localcolabfold
-cd localcolabfold
+
 wget https://raw.githubusercontent.com/YoshitakaMo/localcolabfold/main/install_colabbatch_linux.sh
 wg_ret=$?
 if [ $wg_ret -ne 0 ];then
@@ -130,12 +131,25 @@ if ! dpkg --list | grep ' nginx ' -q; then
     echo "https://youtu.be/BpcK5jON6Cg" is a good instruction to set up nginx and gunicorn
 fi
 
+if [ "$add_cronjobs" -eq "0" ]; then
+    echo ""
+    echo "Adding cron jobs to automatically remove files older than a week"
+    if ! crontab -l | grep "0 2 \* \* \* /home/$uname/.folding/clean.sh" -q; then
+        echo "Adding file cleaning"
+        (crontab -l ; echo "0 2 * * * /home/$uname/.folding/clean.sh") | crontab -
+    fi
+    if ! crontab -l | grep "0 \* \* \* \* /home/$uname/loc_production_server/clean_iplog.py" -q; then
+        echo "Adding iplog cleaning"
+        (crontab -l ; echo "0 * * * * /home/$uname/loc_production_server/clean_iplog.py") | crontab -
+    fi
+fi
+
 echo ""
 echo "Install flask, gunicorn and eventlet in the conda environment of colabfold with pip"
 echo "currently one needs to install gunicorn from so eventlet workers work"
 echo "https://github.com/benoitc/gunicorn/archive/refs/heads/master.zip#egg=gunicorn==20.1.0"
 echo ""
-echo "Start the server from inside the server directory with:"
+echo "Start the server from inside the loc_production_server directory with:"
 echo "gunicorn --workers 12 -k eventlet -p log_files/app.pid app:app"
 echo "add --daemon flag if needed"
 echo ""
