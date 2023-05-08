@@ -2,6 +2,7 @@ import numpy as np
 import string
 
 
+TOKEN_BASE_PATH="/home/cfolding/local-colabfold-server/loc_production_server/tokens/"
 def gen_token(num_token: int) -> None:
     """generate new registered_tokens
     :parameter
@@ -18,7 +19,7 @@ def gen_token(num_token: int) -> None:
     tokens = []
     for i in range(num_token):
         tokens.append("".join(np.random.choice(choices, 10).tolist()))
-    with open("tokens/registered_tokens.txt", "a+") as tok_file:
+    with open(f"{TOKEN_BASE_PATH}registered_tokens.txt", "a+") as tok_file:
         for i in tokens:
             tok_file.write(i + "\n")
 
@@ -31,7 +32,7 @@ def add_used(token: str) -> None:
     :return
         - None
     """
-    with open("tokens/used_tokens.txt", "a") as running:
+    with open(f"{TOKEN_BASE_PATH}used_tokens.txt", "a") as running:
         running.write(token + "\n")
 
 
@@ -45,13 +46,13 @@ def remove_used(token: str) -> None:
     """
     all_tokens = []
     found_token = False
-    with open("tokens/used_tokens.txt", "r") as running:
+    with open(f"{TOKEN_BASE_PATH}used_tokens.txt", "r") as running:
         for i in running:
             if token == i.strip() and not found_token:
                 found_token = True
             else:
                 all_tokens.append(i)
-    with open("tokens/used_tokens.txt", "w+") as readd:
+    with open(f"{TOKEN_BASE_PATH}used_tokens.txt", "w+") as readd:
         for i in all_tokens:
             readd.write(i)
 
@@ -66,7 +67,7 @@ def check_used_token(token: str, max_runs: int = 2) -> bool:
     :return
         - whether the token is already used as many times as allowed
     """
-    cur_used = sum(1 for i in open("tokens/used_tokens.txt", "r") if token == i.strip())
+    cur_used = sum(1 for i in open(f"{TOKEN_BASE_PATH}used_tokens.txt", "r") if token == i.strip())
     if cur_used > max_runs:
         return False
     else:
@@ -83,7 +84,7 @@ def check_token_valid(token: str) -> bool:
     """
     registered_tokens = []
     reg_pass = False
-    with open("tokens/registered_tokens.txt", "r") as reg_tokens:
+    with open(f"{TOKEN_BASE_PATH}registered_tokens.txt", "r") as reg_tokens:
         for i in reg_tokens:
             if token == i.strip():
                 reg_pass = True
@@ -93,7 +94,7 @@ def check_token_valid(token: str) -> bool:
 
 if __name__ == "__main__":
     pass
-    gen_token(5)
-    # remove_used("2a")
-    # print(check_used_token("2a", 1))
-    # print(check_token_valid("2a"))
+    # gen_token(5)
+    remove_used("2a")
+    print(check_used_token("2a", 1))
+    print(check_token_valid("2a"))
