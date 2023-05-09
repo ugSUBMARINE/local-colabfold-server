@@ -2,7 +2,7 @@
 prev_time = None
 prev_data = None
 keep = []
-with open("/home/cfolding/loc_production_server/log_files/ip.log", "r") as oip:
+with open("/home/cfolding/local-colabfold-server/loc_production_server/log_files/ip.log", "r") as oip:
     for ci, i in enumerate(oip):
         i = i.strip().split(",")
         itime = int(i[0].split("_")[-1])
@@ -19,6 +19,6 @@ with open("/home/cfolding/loc_production_server/log_files/ip.log", "r") as oip:
                 prev_data = idata
                 prev_time = itime
 
-with open("/home/cfolding/loc_production_server/log_files/ip.log", "w+") as nip:
+with open("/home/cfolding/local-colabfold-server/loc_production_server/log_files/ip.log", "w+") as nip:
     for i in keep:
         nip.write(",".join(i) + "\n")

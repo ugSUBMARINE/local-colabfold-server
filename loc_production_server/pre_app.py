@@ -9,6 +9,7 @@ from flask import (
     send_file,
     flash,
 )
+from datetime import datetime
 
 from tokengenerator import add_used, check_used_token, check_token_valid
 from app_utils import (
@@ -21,14 +22,15 @@ from app_utils import (
     add_string,
     ip_log,
 )
+from make_bash import make_bash_file
 
-from datetime import datetime
 
 
 def create_app():
     app = Flask(__name__, template_folder="./templates", static_folder="./static")
     app.config["TEMPLATES_AUTO_RELOAD"]
     out_dir = "/mnt/ssd2/colabfold/"
+    schedule_dir = "/home/cfolding/local-colabfold-server/loc_production_server/schedule/"
     max_jobs = 10
     max_tokens = 3
     log_path = "log_files"
@@ -36,7 +38,7 @@ def create_app():
         os.mkdir(log_path)
 
     # clear used tokens on app startup
-    with open("tokens/used_tokens.txt", "w+") as utok:
+    with open("/home/cfolding/local-colabfold-server/loc_production_server/tokens/used_tokens.txt", "w+") as utok:
         pass
 
     # generates secret_key if not present
@@ -54,7 +56,11 @@ def create_app():
 
     @app.route("/")
     def running():
-        num_proc = sum(1 for line in open("/var/pid_storage/pid_store.txt"))
+        sched_path = f"{os.path.join(schedule_dir, 'execution_shedule.txt')}"
+        if os.path.isfile(sched_path):
+            num_proc = sum(1 for line in open(sched_path))
+        else:
+            num_proc = 0
         if num_proc >= max_jobs:
             return redirect(url_for("busy"))
         ip_log(request, "home")
@@ -97,7 +103,11 @@ def create_app():
     def upload():
         ip_log(request, "upload")
         # number of currently running/scheduled jobs
-        num_proc = sum(1 for line in open("/var/pid_storage/pid_store.txt"))
+        sched_path = f"{os.path.join(schedule_dir, 'execution_shedule.txt')}"
+        if os.path.isfile(sched_path):
+            num_proc = sum(1 for line in open(sched_path))
+        else:
+            num_proc = 0
         if num_proc >= max_jobs:
             return redirect(url_for("busy"))
         if request.method == "POST":
@@ -206,25 +216,18 @@ def create_app():
                 additional_settings = add_string(
                     sec_nmodels_in, sec_amberrel_in, sec_ncycles_in
                 )
-                # submit job
+                # generate commands that should be executed
                 cfold_out = os.path.join(dir_name, "out")
-                scheduler_path = "/home/cfolding/.scheduler/schedule.sh"
                 colabfold_path = (
-                    "/home/cfolding/colabfold_batch/colabfold-conda/bin/colabfold_batch"
+                    "/home/cfolding/localcolabfold/colabfold-conda/bin/colabfold_batch"
                 )
-                folding = f"bash {scheduler_path} '{colabfold_path} {fasta_loc} {cfold_out} {additional_settings}'"
+                folding = f"{colabfold_path} {fasta_loc} {cfold_out} {additional_settings}"
+                zipout = f"/home/cfolding/localcolabfold/colabfold-conda/bin/python3 /home/cfolding/local-colabfold-server/loc_production_server/zipping.py -f {dir_name} -d {dir_name}"
+                token_removing = f"/home/cfolding/localcolabfold/colabfold-conda/bin/python3 /home/cfolding/local-colabfold-server/loc_production_server/tokenremove.py --token {token}"
 
-                zipout = f"python3 zipping.py -f {dir_name} -d {dir_name}"
-                token_removing = f"python3 tokenremove.py --token {token}"
-                nohup_path = f"/mnt/ssd2/cf_nohup/{new_name}.out"
+                # create bash file to execute the folding and submit job
+                make_bash_file(new_name, [folding, zipout, token_removing])
 
-                os.system(
-                    "nohup sh -c "
-                    + '"'
-                    + f"{folding} ; {zipout} ; {token_removing}"
-                    + '"'
-                    + f" > {nohup_path} &"
-                )
                 return redirect(url_for("submitted"))
             else:
                 return redirect(url_for("error"))

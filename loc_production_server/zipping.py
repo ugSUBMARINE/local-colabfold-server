@@ -41,6 +41,7 @@ def zipping(exclude_dir: str = "_env") -> None:
                 dirs[:] = [d for d in dirs if "_env" not in d]
                 for f in files:
                     zipdest.write(os.path.join(root, f), f)
+                    print(f)
         # check for symlinks and remove dir if none exist in this dir
         dir_content = os.scandir(path_dir)
         for i in dir_content:
