@@ -1,0 +1,35 @@
+                                             ⢀⣀⣀⡀⠀⠀⢀⣀⣀⣀⡀⠀⠀⠀⠀⠀
+                                             ⠈⢹⠉⢁⣴⣿⣿⣿⣿⣿⣿⣿⣦⡀⠀⠀
+                                             ⠀⢸⠀⣾⣿⣿⣿⣿⣿⣿⣷⣶⣿⣿⡀⠀
+                                             ⠀⣾⢀⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⡀⠀
+                                             ⠀⣿⣤⣀⠈⠉⠉⢻⣿⡟⠉⠉⠉⣀⣤⠀
+                                             ⠀⠀⣿⣿⣷⣄⠀⢸⣿⡇⠀⢠⣾⣿⣿⡀
+                                             ⠀⢰⣿⣿⣿⣿⡆⢸⣿⡇⢠⣿⣿⣿⣿⡇
+                                             ⠀⠈⠙⠻⢿⣿⣿⢸⣿⡇⣸⣿⡿⠟⠋⠁
+                                             ⠀⠀⠀⠀⠀⠈⠉⠈⠉⠁⠉⠁⠀⠀⠀⠀
+
+--------------------------------------------- This is the way -----------------------------------------------
+                             +++ USER is the user name on your computer +++
+                                          like user@192.0.1.2
+
+             +++ /PATH/TO/FASTAFILENAME is the file path on your computer to the fasta file +++
+                                 like /home/user/Documents/myprotein.fasta
+
+                      +++ FASTAFILENAME is the file name of your fasta file +++
+                                        like myprotein.fasta
+
+  +++ ADD_SETTINGS are additional settings for ColabFold they have to be surrounded by single quotes +++
+                                 like '--stop-at-score 68 --num-seeds 5' 
+
++++ If you don't want your user to be visible in the bash history begin the second command with a space +++
+                 like  ' foldit USER /PATH/TO/FASTAFILENAME FASTAFILENAME ADD_SETTINGS'
+
+   In order to schedule a job with all possible ColabFold arguments execute the following commands where
+
+
+                                       cd /home/cfolding/cli_cf
+                      foldit USER /PATH/TO/FASTAFILENAME FASTAFILENAME ADD_SETTINGS
+
+
+                 !!! Your files will be deleted without consideration after one week !!!
+--------------------------------------------------------------------------------------------------------------
