@@ -24,14 +24,14 @@ from app_utils import (
 )
 from make_bash import make_bash_file
 from app_utils import file_path_dict
-FILE_PATHS = file_path_dict()
 
+FILE_PATHS = file_path_dict()
 
 
 def create_app():
     app = Flask(__name__, template_folder="./templates", static_folder="./static")
     app.config["TEMPLATES_AUTO_RELOAD"]
-    out_dir = FILE_PATHS['storage_base']
+    out_dir = FILE_PATHS["storage_base"]
     schedule_dir = f"{FILE_PATHS['loc_prod_path']}/schedule/"
     max_jobs = 10
     max_tokens = 3
@@ -220,8 +220,10 @@ def create_app():
                 )
                 # generate commands that should be executed
                 cfold_out = os.path.join(dir_name, "out")
-                colabfold_path = FILE_PATHS["colabfold_path"] 
-                folding = f"{colabfold_path} {fasta_loc} {cfold_out} {additional_settings}"
+                colabfold_path = FILE_PATHS["colabfold_path"]
+                folding = (
+                    f"{colabfold_path} {fasta_loc} {cfold_out} {additional_settings}"
+                )
                 zipout = f"{FILE_PATHS['python_path']} {FILE_PATHS['loc_prod_path']}/zipping.py -f {dir_name} -d {dir_name}"
                 token_removing = f"{FILE_PATHS['python_path']} {FILE_PATHS['loc_prod_path']}/tokenremove.py --token {token}"
 

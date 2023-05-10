@@ -4,6 +4,7 @@ import random
 import os
 
 from app_utils import file_path_dict
+
 FILE_PATHS = file_path_dict()
 
 
@@ -28,7 +29,7 @@ def make_bash_file(name: str, lines: list[str]):
 
     # name of the script to execute
     new_name = f"{base_path}exe_scripts/{name.split('.')[0]}.sh"
-    
+
     # create the bash script
     with open(new_name, "w+") as bashfile:
         bashfile.write("#!/bin/bash\n")
@@ -47,4 +48,9 @@ def make_bash_file(name: str, lines: list[str]):
 
 if __name__ == "__main__":
     pass
-    make_bash_file("test2.sh", ["/bin/bash /home/cfolding/local-colabfold-server/loc_production_server/test.sh"])
+    make_bash_file(
+        "test2.sh",
+        [
+            "/bin/bash /home/cfolding/local-colabfold-server/loc_production_server/test.sh"
+        ],
+    )

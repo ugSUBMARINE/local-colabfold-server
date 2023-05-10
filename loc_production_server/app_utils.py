@@ -172,7 +172,9 @@ def ip_log(req, access: str, fpath: str = "log_files"):
 
 
 def file_path_dict():
-    with open("/home/cfolding/local-colabfold-server/directory_specification.txt") as dir_file:
+    with open(
+        "/home/cfolding/local-colabfold-server/directory_specification.txt"
+    ) as dir_file:
         path_dict = {}
         for i in dir_file:
             i_split = i.strip().split(":")

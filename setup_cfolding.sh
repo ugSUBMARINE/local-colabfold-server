@@ -89,8 +89,9 @@ fi
 echo ""
 echo "Setting up the scheduler"
 cd job-scheduler-bash
-chmod +x "$HOME/job-scheduler-bash/setup.sh"
-bash -c "$HOME/job-scheduler-bash/setup.sh ${pid_storage_dir}"
+chmod +x "setup.sh"
+bash -c "setup.sh ${pid_storage_dir}"
+cd ..
 
 # installation of miniconda
 if ! conda --version >/dev/null; then
@@ -108,6 +109,7 @@ if ! conda --version >/dev/null; then
         echo "Couldn't install Miniconda3 - abandoning rest of the script"
         exit 1
     fi
+    exec -l $SHELL
     echo ""
 fi
 

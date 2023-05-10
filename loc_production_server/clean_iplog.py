@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from app_utils import file_path_dict
+
 FILE_PATHS = file_path_dict()
 prev_time = None
 prev_data = None

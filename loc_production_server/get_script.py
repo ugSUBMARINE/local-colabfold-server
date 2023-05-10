@@ -1,6 +1,7 @@
 import os
 
 from app_utils import file_path_dict
+
 FILE_PATHS = file_path_dict()
 
 # check if schdule exists

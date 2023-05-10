@@ -1,10 +1,13 @@
 import string
 import numpy as np
 from app_utils import file_path_dict
+
 FILE_PATHS = file_path_dict()
 
 
-TOKEN_BASE_PATH=f"{FILE_PATHS['loc_prod_path']}/tokens/"
+TOKEN_BASE_PATH = f"{FILE_PATHS['loc_prod_path']}/tokens/"
+
+
 def gen_token(num_token: int) -> None:
     """generate new registered_tokens
     :parameter
@@ -69,7 +72,9 @@ def check_used_token(token: str, max_runs: int = 2) -> bool:
     :return
         - whether the token is already used as many times as allowed
     """
-    cur_used = sum(1 for i in open(f"{TOKEN_BASE_PATH}used_tokens.txt", "r") if token == i.strip())
+    cur_used = sum(
+        1 for i in open(f"{TOKEN_BASE_PATH}used_tokens.txt", "r") if token == i.strip()
+    )
     if cur_used > max_runs:
         return False
     else:

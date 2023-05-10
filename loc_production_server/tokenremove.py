@@ -8,4 +8,3 @@ args = parser.parse_args()
 to_remove = args.token
 
 remove_used(to_remove)
-
