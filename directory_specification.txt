@@ -1,0 +1,6 @@
+storage_base:/mnt/ssd2/colabfold
+colabfold_path:/home/cfolding/localcolabfold/colabfold-conda/bin/colabfold_batch
+python_path:/home/cfolding/localcolabfold/colabfold-conda/bin/python3
+gunicorn_path:/home/cfolding/localcolabfold/colabfold-conda/bin/gunicorn
+loc_prod_path:/home/cfolding/local-colabfold-server/loc_production_server
+
