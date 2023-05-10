@@ -1,8 +1,10 @@
 #!/usr/bin/python3
+from app_utils import file_path_dict
+FILE_PATHS = file_path_dict()
 prev_time = None
 prev_data = None
 keep = []
-with open("/home/cfolding/local-colabfold-server/loc_production_server/log_files/ip.log", "r") as oip:
+with open(f"{FILE_PATHS['loc_prod_path']}/log_files/ip.log", "r") as oip:
     for ci, i in enumerate(oip):
         i = i.strip().split(",")
         itime = int(i[0].split("_")[-1])
@@ -19,6 +21,9 @@ with open("/home/cfolding/local-colabfold-server/loc_production_server/log_files
                 prev_data = idata
                 prev_time = itime
 
-with open("/home/cfolding/local-colabfold-server/loc_production_server/log_files/ip.log", "w+") as nip:
+with open(f"{FILE_PATHS['loc_prod_path']}/log_files/ip.log", "w+") as nip:
     for i in keep:
         nip.write(",".join(i) + "\n")
+
+if __name__ == "__main__":
+    pass

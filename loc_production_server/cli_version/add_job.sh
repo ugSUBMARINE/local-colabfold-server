@@ -1,6 +1,10 @@
 #!/bin/bash
 
-base_path="/mnt/ssd2/colabfold/"
+path_path="/home/cfolding/local-colabfold-server/directory_specification.txt"
+storage_path=$(grep storage_base "$path_path" | sed 's/.*://')
+colabfold_path=$(grep colabfold_path "$path_path" | sed 's/.*://')
+python_path=$(grep python_path "$path_path" | sed 's/.*://')
+loc_prod_path=$(grep loc_prod_path "$path_path" | sed 's/.*://')
 
 user="$1"
 path="$2"
@@ -19,10 +23,10 @@ user="${user%%@*}"
 time=$(date +%Y%m%d_%H%M%S)
 project_name="${file_name%%.*}_$time"
 
-if [ ! -d "${base_path}${user}" ]; then
-    mkdir "${base_path}${user}"
+if [ ! -d "${storage_path}${user}" ]; then
+    mkdir "${storage_path}${user}"
 fi
-project_dir="${base_path}${user}/${project_name}"
+project_dir="${storage_path}${user}/${project_name}"
 mkdir "$project_dir" 
 
 mv "${file_name}" "$project_dir" 
@@ -34,6 +38,6 @@ if [ ! "$ret_mv" -eq "0" ]; then
 fi
 
 fasta_path="${project_dir}/${file_name}"
-colabfold_command="/home/cfolding/localcolabfold/colabfold-conda/bin/colabfold_batch ${fasta_path} ${project_dir}/out ${add_settings}"
-zipping_command="/home/cfolding/localcolabfold/colabfold-conda/bin/python3 /home/cfolding/local-colabfold-server/loc_production_server/zipping.py -f ${project_dir} -d ${project_dir}"
+colabfold_command="${colabfold_path} ${fasta_path} ${project_dir}/out ${add_settings}"
+zipping_command="${python_path} ${loc_prod_path}/zipping.py -f ${project_dir} -d ${project_dir}"
 python cli_schedule.py -n "$project_name" -c "${colabfold_command},${zipping_command}"

@@ -1,7 +1,12 @@
 #/bin/bash
 
+path_path="/home/cfolding/local-colabfold-server/directory_specification.txt"
+
+server_path=$(grep loc_prod_path "$path_path" | sed 's/.*://')
+python_path=$(grep python_path "$path_path" | sed 's/.*://')
+
 # base path of the saved scheduled jobs
-base_path="/home/cfolding/local-colabfold-server/loc_production_server/schedule/"
+base_path="${server_path}/schedule/"
 exeshed_path="${base_path}execution_shedule.txt"
 
 function remove_script() {
@@ -25,7 +30,8 @@ function remove_script() {
 
 if [ -e "$base_path" ]; then
     # get the first scheduled script path
-    file_name=$(/home/cfolding/localcolabfold/colabfold-conda/bin/python3 /home/cfolding/local-colabfold-server/loc_production_server/get_script.py)
+    pre_file_name () { "$python_path" "${server_path}/get_script.py"; }
+    file_name=$(pre_file_name)
     if [ ! "${file_name}" == "WAIT" ]; then 
         now=$(date +%Y-%m-%d-%H-%M-%S)
         # execute the script and log the execution

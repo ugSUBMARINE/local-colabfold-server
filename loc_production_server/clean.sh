@@ -1,5 +1,12 @@
 #!/bin/bash
+
+
+path_path="/home/cfolding/local-colabfold-server/directory_specification.txt"
+
+storage_path=$(grep storage_base "$path_path" | sed 's/.*://')
+server_path=$(grep loc_prod_path "$path_path" | sed 's/.*://')
+
 find /mnt/ssd2/cf_nohup/ -type f -mtime +7 -exec rm -r {} \;
-find /mnt/ssd2/colabfold/ -type d -mtime +7 -exec rm -r {} \;
-find /mnt/ssd2/colabfold/ -type f -mtime +7 -exec rm -r {} \;
-find /home/cfolding/local-colabfold-server/loc_production_server/schedule/exe_scripts/ -type f -mtime +7 -exec rm -r {} \;
+find "$storage_path" -type d -mtime +7 -exec rm -r {} \;
+find "$storage_path" -type f -mtime +7 -exec rm -r {} \;
+find "${server_path}/schedule/exe_scripts/" -type f -mtime +7 -exec rm -r {} \;

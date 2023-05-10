@@ -1,8 +1,10 @@
-import numpy as np
 import string
+import numpy as np
+from app_utils import file_path_dict
+FILE_PATHS = file_path_dict()
 
 
-TOKEN_BASE_PATH="/home/cfolding/local-colabfold-server/loc_production_server/tokens/"
+TOKEN_BASE_PATH=f"{FILE_PATHS['loc_prod_path']}/tokens/"
 def gen_token(num_token: int) -> None:
     """generate new registered_tokens
     :parameter

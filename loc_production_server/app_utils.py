@@ -171,5 +171,11 @@ def ip_log(req, access: str, fpath: str = "log_files"):
         iplog.write(ip_string)
 
 
-# append_queue("test2")
-# os.system("tail -n +2 log_files/queued.txt")
+def file_path_dict():
+    with open("/home/cfolding/local-colabfold-server/directory_specification.txt") as dir_file:
+        path_dict = {}
+        for i in dir_file:
+            i_split = i.strip().split(":")
+            if len(i_split[0]) > 0:
+                path_dict[i_split[0]] = ":".join(i_split[1:])
+        return path_dict

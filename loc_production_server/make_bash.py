@@ -3,6 +3,9 @@ import string
 import random
 import os
 
+from app_utils import file_path_dict
+FILE_PATHS = file_path_dict()
+
 
 def make_bash_file(name: str, lines: list[str]):
     """
@@ -16,7 +19,7 @@ def make_bash_file(name: str, lines: list[str]):
         - None
     """
     # path where schedule is stored
-    base_path = "/home/cfolding/local-colabfold-server/loc_production_server/schedule/"
+    base_path = f"{FILE_PATHS['loc_prod_path']}/schedule/"
     # create needed directories if they are not present
     if not os.path.isdir(base_path):
         os.mkdir(base_path)

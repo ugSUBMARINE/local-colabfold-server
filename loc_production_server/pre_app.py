@@ -23,14 +23,16 @@ from app_utils import (
     ip_log,
 )
 from make_bash import make_bash_file
+from app_utils import file_path_dict
+FILE_PATHS = file_path_dict()
 
 
 
 def create_app():
     app = Flask(__name__, template_folder="./templates", static_folder="./static")
     app.config["TEMPLATES_AUTO_RELOAD"]
-    out_dir = "/mnt/ssd2/colabfold/"
-    schedule_dir = "/home/cfolding/local-colabfold-server/loc_production_server/schedule/"
+    out_dir = FILE_PATHS['storage_base']
+    schedule_dir = f"{FILE_PATHS['loc_prod_path']}/schedule/"
     max_jobs = 10
     max_tokens = 3
     log_path = "log_files"
@@ -38,7 +40,7 @@ def create_app():
         os.mkdir(log_path)
 
     # clear used tokens on app startup
-    with open("/home/cfolding/local-colabfold-server/loc_production_server/tokens/used_tokens.txt", "w+") as utok:
+    with open(f"{FILE_PATHS['loc_prod_path']}/tokens/used_tokens.txt", "w+") as utok:
         pass
 
     # generates secret_key if not present
@@ -218,12 +220,10 @@ def create_app():
                 )
                 # generate commands that should be executed
                 cfold_out = os.path.join(dir_name, "out")
-                colabfold_path = (
-                    "/home/cfolding/localcolabfold/colabfold-conda/bin/colabfold_batch"
-                )
+                colabfold_path = FILE_PATHS["colabfold_path"] 
                 folding = f"{colabfold_path} {fasta_loc} {cfold_out} {additional_settings}"
-                zipout = f"/home/cfolding/localcolabfold/colabfold-conda/bin/python3 /home/cfolding/local-colabfold-server/loc_production_server/zipping.py -f {dir_name} -d {dir_name}"
-                token_removing = f"/home/cfolding/localcolabfold/colabfold-conda/bin/python3 /home/cfolding/local-colabfold-server/loc_production_server/tokenremove.py --token {token}"
+                zipout = f"{FILE_PATHS['python_path']} {FILE_PATHS['loc_prod_path']}/zipping.py -f {dir_name} -d {dir_name}"
+                token_removing = f"{FILE_PATHS['python_path']} {FILE_PATHS['loc_prod_path']}/tokenremove.py --token {token}"
 
                 # create bash file to execute the folding and submit job
                 make_bash_file(new_name, [folding, zipout, token_removing])

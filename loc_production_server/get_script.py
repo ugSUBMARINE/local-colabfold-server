@@ -1,7 +1,10 @@
 import os
 
+from app_utils import file_path_dict
+FILE_PATHS = file_path_dict()
+
 # check if schdule exists
-exe_sched_path = "/home/cfolding/local-colabfold-server/loc_production_server/schedule/execution_shedule.txt"
+exe_sched_path = f"{FILE_PATHS['loc_prod_path']}/schedule/execution_shedule.txt"
 if os.path.isfile(exe_sched_path):
     all_lines = []
     # True if none of the scripts are running
