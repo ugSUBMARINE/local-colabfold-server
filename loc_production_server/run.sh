@@ -4,6 +4,7 @@ path_path="/home/cfolding/local-colabfold-server/directory_specification.txt"
 
 server_path=$(grep loc_prod_path "$path_path" | sed 's/.*://')
 python_path=$(grep python_path "$path_path" | sed 's/.*://')
+storage_path=$(grep storage_base "$path_path" | sed 's/.*://')
 
 # base path of the saved scheduled jobs
 base_path="${server_path}/schedule/"
@@ -36,7 +37,7 @@ if [ -e "$base_path" ]; then
         now=$(date +%Y-%m-%d-%H-%M-%S)
         # execute the script and log the execution
         if [ -f "$file_name" ];then
-            echo "${now}    ${file_name}" > /mnt/ssd2/.shutdown/work.active
+            echo "${now}    ${file_name}" > "${storage_path}/.shutdown/work.active"
             echo "**** ${now} EXECUTING ${file_name} ****"
             bash "$file_name" 
             ret_val=$?
@@ -45,7 +46,7 @@ if [ -e "$base_path" ]; then
             chmod +rw "$exeshed_path"
             chmod o+rw "$exeshed_path"
             echo "RETURNVALUE:${ret_val}~~${now}~~${file_name}" >> "${base_path}log.file"
-            rm /mnt/ssd2/.shutdown/work.active
+            rm "${storage_path}/.shutdown/work.active"
         else
             echo "xxx FAILED accessing ${file_name} xxx"
             echo "FAILED ${now}~~${file_name}" >> "${base_path}log.file"
