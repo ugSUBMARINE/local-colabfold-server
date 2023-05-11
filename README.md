@@ -4,49 +4,65 @@
 
 This repository contains code to build a website on top of the [localcolabfold](https://github.com/YoshitakaMo/localcolabfold) repository of [colabfold](https://github.com/sokrypton/ColabFold) that can be run on a local machine.
 It is meant to provide an easy access to the core functions of colabfold.
-The python version is based on the colabfold requirements **3.8.12**.
+The python version is based on the colabfold requirements **3.10.11**.
 **It is tested on Ubuntu 22.04**
 
-The account you install everything on should be a non admin account with the ability to use `sudo`.
+The account you install everything on should be a non admin account.
 
 ***THIS IS MEANT TO RUN ON A LOCAL NETWORK***
 
 
-## Things that can be set in the PARAMETERS section of the setup file
-*   `add_cronjobs`
-    *   Whether to add cron jobs that remove files older than one week in the `storage_dir`
-*   `mount_drives`
-    *   Check whether ssd needs to be mounted
-*   `storage_dir`
-    *   Specifies the directory (as absolute bath) in which the colabfold outputs should be stored
-*   `pid_storage_dir`
-    *   Specifies the directory where the `pid_storage` for the job scheduler is located - by default `/var/pid_storage/` is used.
-*   `check_openssh`
-    * Checks if openssh-server is installed
-
-
-### In order to set things up just run the `bash setup_cfolding.sh` from within this repository. This will do the following things
-*   Checks if git, wget and openssh-server are installed
-*   Give instructions to mount the SSD as `ssd2` if one wants
-*   Create tokens in `./loc_production_server/tokens/`
-*   Create two directories in `storage_dir` to store colabfold results and nohub output of the colabfold runs and make them accessible to all user
-*   Cloning the bash job scheduler software and installing it in $HOME
-*   Installing Miniconda in $HOME
-*   Installing localcolabfold in $HOME/localcolabfold
-*   Adding cron jobs to remove files older than one week from these directories
-*   Giving instructions how to run everything as a server
-
+## Setup
+*   Make sure to have git installed 
+*   Download and install [localcolabfold](https://github.com/YoshitakaMo/localcolabfold)
+*   Download [local-colabfold-sever](https://github.com/ugSUBMARINE/local-colabfold-server)
+*   Install the additionally required packages with `pip install -r requirements.txt`
+*   Change the specified paths in `directory_specification.txt`
+    *   `storage_base` : The base directory where all the results will be stored
+    *   `colabfold_path` : The path to the coablfold bin
+    *   `python_path` : The path to your python bin
+    *   `gunicorn_path` : The path to your gunicorn bin
+    *   `loc_prod_path` : The path to the `loc_production_server` directory of this repository
+*   Add cronjobs with [crontab](https://www.man7.org/linux/man-pages/man1/crontab.1.html) to continuously check for jobs to execute
+    * MINIMUM NEEDED CRONJOB
+        * This checks every minute whether there is a job to run or not
+        * `* * * * * /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log`
+    * RECOMMENDED cronjob setup instead of the MINIMUM
+        * These will set checks for jobs to be executed 
+        * `* 7-20 * * 1-5 /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log`
+        * `30 20-23 * * 1-5 /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log`
+        * `59 0-7 * * 1-5 /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log`
+        * `30 * * * 6,0 /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log`
+        * These start the website on server start and clearnfiles to be only stored for 1 week
+        * `@reboot /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run_on_start.sh >> /mnt/ssd2/.shutdown/startup.log`
+        * `0 2 * * * /home/cfolding/local-colabfold-server/loc_production_server/clean.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/file_clean.log`
+        * `0 * * * * /home/cfolding/localcolabfold/colabfold-conda/bin/python3 /home/cfolding/local-colabfold-server/loc_production_server/clean_iplog.py`
+*   These file paths need to be changed so the paths can be figured out - you will need to change the "/home/cfolding/" part of the links
+    https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/app_utils.py#L176
+    https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/clean.sh#L4
+    https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/cli_version/add_job.sh#L3
+    https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/run.sh#L3
+    https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/run_on_start.sh#L6
+    https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/start_gunicorn.sh#L3
+*   Run `python loc_production_server/tokengenerator.py` to generate tokens
+*   Run `bash loc_production_server/run_on_start.sh`
 
 ### The website can be used in the following way
-*   Visiting the local IP adress through any browser
+*   Visiting the local IP address through any browser
 *   Reading the guide
 *   Looking at the example fasta files
 *   Uploading a fasta file of the protein of interest with:
-    *   a user name which creates a folder with the same name in /mnt/ssd2/colabfold where the results will be stored
+    *   a user name which creates a folder with the same name in `strorage_base` where the results will be stored
     *   a token
         +   these are stored in tokens/registered_tokens.txt
+    *   setting
+        * number of model to generate
+        * number of recycles
+        * whether to use amber relax or not
 *   Downloading the results with the right user name from downloads
-### Indentional restrictions
+    * This contains a zip file with all the results from colabfold except from the `envs` directory
+
+### Intentional restrictions
   +   One token can only queue **3 jobs** so the server can't get overfilled with requests
   +   The server accepts only **10 queued jobs** - after that new submissions will be blocked until less than 10 jobs are queued
       +   this can be changed in https://github.com/ugSUBMARINE/local-colabfold-server/blob/6752cbb9cc7b0f463e063f763d6b68956f139605/loc_production_server/pre_app.py#L32-L33

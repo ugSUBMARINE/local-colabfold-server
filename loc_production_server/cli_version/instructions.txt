@@ -24,7 +24,7 @@
 +++ If you don't want your user to be visible in the bash history begin the second command with a space +++
                  like  ' foldit USER /PATH/TO/FASTAFILENAME FASTAFILENAME ADD_SETTINGS'
 
-   In order to schedule a job with all possible ColabFold arguments execute the following commands where
+       In order to schedule a job with all possible ColabFold arguments execute the following commands
 
 
                                        cd /home/cfolding/cli_cf

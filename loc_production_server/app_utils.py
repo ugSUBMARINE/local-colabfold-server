@@ -171,7 +171,14 @@ def ip_log(req, access: str, fpath: str = "log_files"):
         iplog.write(ip_string)
 
 
-def file_path_dict():
+def file_path_dict() -> dict:
+    """
+    :parameter
+        - None
+    :return
+        - path_dict
+          dictionary specifying all paths needed
+    """
     with open(
         "/home/cfolding/local-colabfold-server/directory_specification.txt"
     ) as dir_file:

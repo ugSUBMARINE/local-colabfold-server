@@ -68,30 +68,6 @@ cd "loc_production_server"
 python3 tokengenerator.py
 cd ..
 
-# creating needed directories
-if [ ! -d "$storage_dir/colabfold" ]; then
-    echo "Creating expected directories colabfold and cf_nohup in $storage_dir"
-    mkdir -p "$storage_dir/colabfold"
-    chmod +rwx "$storage_dir/colabfold"
-fi
-if [ ! -d "$storage_dir/cf_nohup" ]; then
-    mkdir -p "$storage_dir/cf_nohup"
-    chmod +rwx "$storage_dir/cf_nohup"
-fi
-
-# cloning job scheduler and installing it
-git clone https://github.com/gwirn/job-scheduler-bash.git
-g_ret=$?
-if [ $g_ret -ne 0 ];then
-    echo "Couldn't download scheduler script from its repository https://github.com/gwirn/job-scheduler-bash.git to $HOME- abandoning rest of the script"
-    exit 1
-fi
-echo ""
-echo "Setting up the scheduler"
-cd job-scheduler-bash
-chmod +x "setup.sh"
-bash -c "setup.sh ${pid_storage_dir}"
-cd ..
 
 # installation of miniconda
 if ! conda --version >/dev/null; then
@@ -113,6 +89,8 @@ if ! conda --version >/dev/null; then
     echo ""
 fi
 
+exec -l $SHELL
+
 echo "Downloading local colabfold installer script from its repository https://github.com/YoshitakaMo/localcolabfold to $HOME"
 
 wget https://raw.githubusercontent.com/YoshitakaMo/localcolabfold/main/install_colabbatch_linux.sh
@@ -124,14 +102,6 @@ fi
 
 echo "Installing colabfold_batch"
 bash install_colabbatch_linux.sh
-
-if ! echo $PATH | grep "colabfold_batch" -q; then
-    echo "Make sure colabfold is in the PATH and it is accessibel with colabfold_batch" 
-fi
-
-if ! dpkg --list | grep ' nginx ' -q; then
-    echo "https://youtu.be/BpcK5jON6Cg" is a good instruction to set up nginx and gunicorn
-fi
 
 if [ "$add_cronjobs" -eq "0" ]; then
     echo ""

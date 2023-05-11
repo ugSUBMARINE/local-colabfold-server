@@ -38,6 +38,8 @@ def create_app():
     log_path = "log_files"
     if not os.path.isdir(log_path):
         os.mkdir(log_path)
+    if not os.path.isdir(out_dir):
+        os.mkdir(out_dir)
 
     # clear used tokens on app startup
     with open(f"{FILE_PATHS['loc_prod_path']}/tokens/used_tokens.txt", "w+") as utok:
