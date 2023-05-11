@@ -52,15 +52,15 @@ The account you install everything on should be a non admin account.
 *   Reading the guide
 *   Looking at the example fasta files
 *   Uploading a fasta file of the protein of interest with:
-    *   a user name which creates a folder with the same name in `strorage_base` where the results will be stored
+    *   a user name which creates a folder with the same name in `storage_base` where the results will be stored
     *   a token
-        +   these are stored in tokens/registered_tokens.txt
+        +   these are stored in `loc_prod_path/tokens/registered_tokens.txt`
     *   setting
         * number of model to generate
         * number of recycles
         * whether to use amber relax or not
 *   Downloading the results with the right user name from downloads
-    * This contains a zip file with all the results from colabfold except from the `envs` directory
+    * This contains a zip file with all the results from colabfold except from the `envs` directory due to its size
 
 ### Intentional restrictions
   +   One token can only queue **3 jobs** so the server can't get overfilled with requests
@@ -70,6 +70,34 @@ The account you install everything on should be a non admin account.
       +   at https://github.com/ugSUBMARINE/local-colabfold-server/blob/6752cbb9cc7b0f463e063f763d6b68956f139605/loc_production_server/pre_app.py#L164
       +   the number of sequences can be changed with adding ` ,max_protein=N` 
       +   the number of amino acids can be changed with adding ` ,max_seqlen=L`
+
+### Created log files
+There are several log files that get created to monitor what's happening (assuming the server gets started with `run_on_start.sh`)
+*   on startup
+    *   at `storage_path/.shutdown` :
+        -   `machinestartup` : contains the date when the computer was started
+        -   `serverstartup` : contains the date and whether the start of the website succeded or not
+    *   at `loc_prod_path/log_files` :
+        -   `app.pid` : contains the PID of the master process of  gunicorn
+        -   `error.log` : contains error and info about processes on the website
+*   during production
+    *   at `loc_prod_path/log_files` :
+        -   `error.log` : contains error and info about processes on the website
+        -   `execution.log` : contains all system output written by the running scripts/program/colabfold/...
+        -   `ip.log` : contains which ip address visited which route
+    *   at `loc_prod_path/schedule` :
+        -   `log.file` : which driver bash script was executed when and what was the return value
+
+### Create system files
+Different system file will be created during the websites activity to keep up with whats happening
+*   at `loc_prod_path/tokens` 
+    -   `registered_tokens.txt` : the registered tokens are stored there
+*   at `storage_path/.shutdown`
+    -   `work.active` : contains the name of the driver script as well as its start time and will be deleted after the script finished
+*   at `loc_prod_path/schedule`
+    -   `exe_scripts/SCRIPTNAME.sh` : the driver script for a colabfold run - it contains the colabfold command as well as the zip and token remove commands
+    -   `execution_schedule.txt` : contains the paths to the driver scripts that need to be executed
+
 
 
 The images that are used as backgrounds were created using KerasCV's Stable Diffusion implementation.
