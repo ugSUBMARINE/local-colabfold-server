@@ -23,10 +23,10 @@ user="${user%%@*}"
 time=$(date +%Y%m%d_%H%M%S)
 project_name="${file_name%%.*}_$time"
 
-if [ ! -d "${storage_path}${user}" ]; then
-    mkdir "${storage_path}${user}"
+if [ ! -d "${storage_path}/${user}" ]; then
+    mkdir "${storage_path}/${user}"
 fi
-project_dir="${storage_path}${user}/${project_name}"
+project_dir="${storage_path}/${user}/${project_name}"
 mkdir "$project_dir" 
 
 mv "${file_name}" "$project_dir" 
@@ -40,4 +40,4 @@ fi
 fasta_path="${project_dir}/${file_name}"
 colabfold_command="${colabfold_path} ${fasta_path} ${project_dir}/out ${add_settings}"
 zipping_command="${python_path} ${loc_prod_path}/zipping.py -f ${project_dir} -d ${project_dir}"
-python cli_schedule.py -n "$project_name" -c "${colabfold_command},${zipping_command}"
+"${python_path}" cli_schedule.py -n "$project_name" -c "${colabfold_command},${zipping_command}"
