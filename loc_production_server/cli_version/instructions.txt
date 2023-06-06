@@ -28,7 +28,7 @@
 
 
                                        cd /home/cfolding/cli_cf
-                      foldit USER /PATH/TO/FASTAFILENAME FASTAFILENAME ADD_SETTINGS
+                      foldit USER /PATH/TO/FASTAFILENAME FASTAFILENAME 'ADD_SETTINGS'
 
 
                  !!! Your files will be deleted without consideration after one week !!!
