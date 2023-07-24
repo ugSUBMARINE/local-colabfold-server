@@ -1,4 +1,4 @@
-storage_base:/mnt/ssd2/colabfold
+storage_base:/mnt/ssd1/colabfold
 colabfold_path:/home/cfolding/localcolabfold/colabfold-conda/bin/colabfold_batch
 python_path:/home/cfolding/localcolabfold/colabfold-conda/bin/python3
 gunicorn_path:/home/cfolding/localcolabfold/colabfold-conda/bin/gunicorn

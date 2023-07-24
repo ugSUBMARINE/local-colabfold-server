@@ -40,4 +40,8 @@ fi
 fasta_path="${project_dir}/${file_name}"
 colabfold_command="${colabfold_path} ${fasta_path} ${project_dir}/out ${add_settings}"
 zipping_command="${python_path} ${loc_prod_path}/zipping.py -f ${project_dir} -d ${project_dir}"
+<<<<<<< Updated upstream
 "${python_path}" cli_schedule.py -n "$project_name" -c "${colabfold_command},${zipping_command}"
+=======
+"${python_path}" ${loc_prod_path}/cli_version/cli_schedule.py -n "$project_name" -c "${colabfold_command},${zipping_command}"
+>>>>>>> Stashed changes

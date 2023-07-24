@@ -21,13 +21,16 @@
   +++ ADD_SETTINGS are additional settings for ColabFold they have to be surrounded by single quotes +++
                                  like '--stop-at-score 68 --num-seeds 5' 
 
-+++ If you don't want your user to be visible in the bash history begin the second command with a space +++
+   +++ If you don't want your user to be visible in the bash history begin the command with a space +++
                  like  ' foldit USER /PATH/TO/FASTAFILENAME FASTAFILENAME ADD_SETTINGS'
 
        In order to schedule a job with all possible ColabFold arguments execute the following commands
 
 
+<<<<<<< Updated upstream
                                        cd /home/cfolding/cli_cf
+=======
+>>>>>>> Stashed changes
                       foldit USER /PATH/TO/FASTAFILENAME FASTAFILENAME 'ADD_SETTINGS'
 
 
