@@ -1,5 +1,5 @@
 import string
-import numpy as np
+import random
 from app_utils import file_path_dict
 
 FILE_PATHS = file_path_dict()
@@ -16,14 +16,11 @@ def gen_token(num_token: int) -> None:
     :return
         - None
     """
-    alphabet = np.asarray(list(string.ascii_uppercase))
-    alphabet = alphabet[alphabet != "O"]
-    numbers = np.arange(1, 10)
-    choices = np.concatenate((alphabet, numbers))
-    np.random.shuffle(choices)
+    alphabet = list(string.ascii_uppercase)
+    alphabet = [i for i in alphabet if i != "O"]
     tokens = []
     for i in range(num_token):
-        tokens.append("".join(np.random.choice(choices, 10).tolist()))
+        tokens.append("".join(random.choices(alphabet, k=10)))
     with open(f"{TOKEN_BASE_PATH}registered_tokens.txt", "a+") as tok_file:
         for i in tokens:
             tok_file.write(i + "\n")

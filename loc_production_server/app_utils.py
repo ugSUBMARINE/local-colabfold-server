@@ -77,7 +77,8 @@ def allowed_string(
     if not check:
         flash(info)
         if remove_token:
-            os.system(f"python3 tokenremove.py --token {token_as}")
+            python_path = file_path_dict()["python_path"]
+            os.system(f"{python_path} tokenremove.py --token {token_as}")
         return False, None
     else:
         return True, secure_filename(escape(in_string))
@@ -126,7 +127,8 @@ def remove_token_after_crash(token_in: str) -> None:
     :return
         - None
     """
-    os.system(f"python3 tokenremove.py --token {token_in}")
+    python_path = file_path_dict()["python_path"]
+    os.system(f"{python_path} tokenremove.py --token {token_in}")
 
 
 def add_string(nmodels: str, amber_rel: str, nrecyles: str):

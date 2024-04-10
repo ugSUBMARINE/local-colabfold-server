@@ -28,6 +28,5 @@
 
                       foldit USER /PATH/TO/FASTAFILENAME FASTAFILENAME 'ADD_SETTINGS'
 
-
                  !!! Your files will be deleted without consideration after one week !!!
 --------------------------------------------------------------------------------------------------------------

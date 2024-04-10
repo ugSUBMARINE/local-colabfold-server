@@ -1,0 +1,5 @@
+loc_production_server/tokens/registered_tokens.txt
+loc_production_server/tokens/used_tokens.txt
+loc_production_server/__pycache__
+schedule/
+log_files/
