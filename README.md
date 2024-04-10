@@ -34,7 +34,7 @@ The account you install everything on should be a non admin account.
         * `59 0-7 * * 1-5 /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log`
         * `30 * * * 6,0 /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log`
         * These start the website on server start and clearnfiles to be only stored for 1 week
-        * `@reboot /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run_on_start.sh >> /mnt/ssd2/.shutdown/startup.log`
+        * `@reboot /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run_on_start.sh >> /mnt/ssd1/.shutdown/startup.log`
         * `0 2 * * * /home/cfolding/local-colabfold-server/loc_production_server/clean.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/file_clean.log`
         * `0 * * * * /home/cfolding/localcolabfold/colabfold-conda/bin/python3 /home/cfolding/local-colabfold-server/loc_production_server/clean_iplog.py`
 *   These file paths need to be changed so the paths can be figured out - you will need to change the "/home/cfolding/" part of the links
