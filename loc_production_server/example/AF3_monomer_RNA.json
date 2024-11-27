@@ -1,0 +1,21 @@
+{
+  "name": "RNA_PROT",
+  "modelSeeds": [42],
+  "sequences": [
+    {
+      "protein": {
+        "id": ["A"],
+        "sequence": "GSSGSSGNRANPDPNCCLGVFGLSLYTTERDLREVFSKYGPIADVSIVYDQQSRRSRGFAFVYFENVDDAKEAKERANGMELDGRRIRVDFSITKRPHT"
+      }
+    },
+    {
+      "rna": {
+        "id": ["B"],
+        "sequence": "GAAGAA"
+      }
+    }
+  ],
+  "dialect": "alphafold3",
+  "version": 1
+}
+

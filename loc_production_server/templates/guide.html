@@ -8,7 +8,7 @@ document.getElementById("wholebody").className = "vader_base";
 <h1>User Guide</h1>
 <div style="font-size:100px">&#x1F4DC</div>
 <div class="quote">"Lesson one from this experience: Realize how much you don't know. Lesson two: Make sure to learn from lesson one." - Jacen Solo</div><br />
-<div>The following steps need to be taken to fold a protein sequence:</div>
+<p>The following steps need to be taken to fold a protein sequence with <strong>AlphaFold2</strong> using ColabFold:</p>
     <dl class"guid_list">
         <dt><strong>*</strong> Upload your protein sequence as a fasta file at <strong><a class="link" href="/upload">Upload</a></strong></dt>
         <dd>- <strong>The file must be a .fasta file</strong><dd>
@@ -30,5 +30,16 @@ document.getElementById("wholebody").className = "vader_base";
         <dt><strong>*</strong> When your sequence is folded you can find it with the same name as your fasta file in <strong><a class="link" href="/download">Download</a></strong></dt>
     </dl>
     <p><strong>Download your results when they are finished - they will be <font color="red">deleted</font> without consideration after one week</strong></p>
+<p>The following steps need to be taken to fold a protein sequence with <strong>AlphaFold3</strong>:</p>
+    <dl class"guid_list">
+        <dt><strong>*</strong> Upload your protein sequence as a json file at <strong><a class="link" href="/upload">Upload</a></strong></dt>
+        <dd>- <strong>The file must be a .json file</strong><dd>
+        <dd>- Example json files can be download at <strong><a class="link" href="/example">Example</a></strong></dd>
+        <dd>- For a complete guide to build your desired input json file visit <strong><a class="link" href="https://github.com/google-deepmind/alphafold3/blob/main/docs/input.md">AlphaFold3 GitHub</a></strong></dd>
+        <dt><strong>*</strong> Enter a user name</dt>
+        <dt><strong>*</strong> Enter a valid token</dt>
+        <dt><strong>*</strong> Ignore all other input fields - they are meant for <strong>Alphafold2</strong></dt>
+        <dt><strong>*</strong> <strong>Otherwise same rules apply as for Alphafold2</strong></dt>
+    </dl>
 </div>
 {% endblock %}
