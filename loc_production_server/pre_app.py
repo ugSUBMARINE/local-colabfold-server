@@ -254,7 +254,7 @@ def create_app():
                     colabfold_path = FILE_PATHS["colabfold_path"]
                     folding=f"{FILE_PATHS['docker_path']} run --volume {dir_name}:/root/af_input --volume {cfold_out}:/root/af_output --volume {FILE_PATHS['weights_path']}:/root/models --volume {FILE_PATHS['db_path']}:/root/public_databases --gpus all alphafold3 python run_alphafold.py --json_path=/root/af_input/{os.path.basename(json_loc)} --model_dir=/root/models --output_dir=/root/af_output 2>&1 | tee {dir_name}/log.file"
 
-                zipout = f"{FILE_PATHS['python_path']} {FILE_PATHS['loc_prod_path']}/zipping.py -f {dir_name} -d {dir_name} -b {dir_name}"
+                zipout = f"{FILE_PATHS['python_path']} {FILE_PATHS['loc_prod_path']}/zipping.py -f {dir_name} -d {dir_name}"
                 token_removing = f"{FILE_PATHS['python_path']} {FILE_PATHS['loc_prod_path']}/tokenremove.py --token {token}"
                 time_start = f"echo \"START $(date +%Y-%m-%d_%H:%M:%S)\" > {dir_name}/prediction_time.txt"
                 time_end = f"echo \"END   $(date +%Y-%m-%d_%H:%M:%S)\" >> {dir_name}/prediction_time.txt"
