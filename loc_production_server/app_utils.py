@@ -2,11 +2,12 @@ import os
 import secrets
 from datetime import datetime
 import re
+import json
 
 from flask import flash, escape
 from werkzeug.utils import secure_filename
 
-ALLOWED_EXTENSIONS = set(["fasta", "fa"])
+ALLOWED_EXTENSIONS = set(["fasta", "fa", "json"])
 
 
 def gen_key(dir_name: str = "log_files") -> None:
@@ -118,6 +119,73 @@ def fasta_check(fasta_path: str, max_protein: int = 3, max_seqlen=2500) -> int:
         return 2
     return 0
 
+def protein_check(data: dict) -> int:
+    """
+    check how many amino acids are in a AF3 dict
+        :parameter
+        - data:
+          the dict to check
+        :return
+        - total_len:
+          number of found amino acids
+    """
+    seq_data = data["sequences"]
+    total_len = 0
+    for i in seq_data:
+        if "protein" in i.keys():
+            i_prot_data = i["protein"]
+            if "id" in i_prot_data and "sequence" in i_prot_data:
+                i_n_chains = len(i_prot_data["id"])
+                i_len_seq = len(i_prot_data["sequence"])
+                i_total_len = i_n_chains * i_len_seq
+                total_len += i_total_len
+        elif "ligand" in i.keys():
+            i_lig = i["ligand"]
+            if "smiles" in i_lig.keys():
+                i_smiles = i_lig["smiles"].replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("_", "").replace(".", "")
+                total_len += len(i_smiles)
+    return total_len
+
+
+def json_check(path: str, max_seqlen: int = 3500, max_protein: int = 3) -> int:
+    """
+        :parameter
+        - path:
+          path to the json file
+        - max_seqlen:
+          maximum number of amino acids in the file
+        - max_protein:
+          how many protein sequences can be in the fasta file
+    :return
+        - int
+          0 if everything is fine
+          1 if json in malformatted
+          2 if to many proteins are found
+          3 if to many amino acids are found
+    """
+    with open(path, "r") as jfile:
+        try:
+            data = json.load(jfile)
+        except json.decoder.JSONDecodeError:
+            return 1
+        if isinstance(data, list):
+            valid_all = False
+            if len(data) <= max_protein:
+                for i in data:
+                    valid_all = protein_check(i) <= max_seqlen
+                if valid_all:
+                    return 0
+                else:
+                    return 3
+            else:
+                return 2
+        elif isinstance(data, dict):
+            if protein_check(data) <= max_seqlen:
+                return 0
+            else:
+                return 3
+        else:
+            return 1
 
 def remove_token_after_crash(token_in: str) -> None:
     """remove token from in used ones on invalid input
@@ -186,7 +254,8 @@ def file_path_dict() -> dict:
     ) as dir_file:
         path_dict = {}
         for i in dir_file:
-            i_split = i.strip().split(":")
-            if len(i_split[0]) > 0:
-                path_dict[i_split[0]] = ":".join(i_split[1:])
+            if not i.startswith("#"):
+                i_split = i.strip().split(":")
+                if len(i_split[0]) > 0:
+                    path_dict[i_split[0]] = ":".join(i_split[1:])
         return path_dict

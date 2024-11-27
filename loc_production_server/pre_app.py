@@ -18,12 +18,13 @@ from app_utils import (
     allowed_file,
     allowed_string,
     fasta_check,
+    json_check,
     remove_token_after_crash,
     add_string,
     ip_log,
+    file_path_dict
 )
 from make_bash import make_bash_file
-from app_utils import file_path_dict
 
 FILE_PATHS = file_path_dict()
 
@@ -67,8 +68,16 @@ def create_app():
             num_proc = 0
         if num_proc >= max_jobs:
             return redirect(url_for("busy"))
+        start_date = "01.01.1970"
+        n_lines = 0
+        with open("./schedule/log.file", "r") as lfile:
+            for ci, i in enumerate(lfile):
+                if ci == 0:
+                    if len(i) > 0 and "~~" in i:
+                        start_date = ".".join(i.split("~~")[1].split("-")[:3][::-1])
+                n_lines +=1
         ip_log(request, "home")
-        return render_template("index.html", number=num_proc)
+        return render_template("index.html", number=num_proc, start_date=start_date,n_jobs=n_lines)
 
     @app.route("/busy")
     def busy():
@@ -170,16 +179,29 @@ def create_app():
                 # create output dir
                 dir_name = os.path.join(user_path, new_name)
                 os.mkdir(dir_name)
-                # save fasta file
-                new_filename = f"{new_name}.fasta"
-                fasta_loc = os.path.join(dir_name, new_filename)
-                file.save(fasta_loc)
+                afv = 3
+                if os.path.splitext(filename_in)[-1].replace(".","").startswith("fa"):
+                    afv = 2
+                if afv == 2:
+                    # save fasta file
+                    new_filename = f"{new_name}.fasta"
+                    fasta_loc = os.path.join(dir_name, new_filename)
+                    file.save(fasta_loc)
+                elif afv == 3:
+                    # save json file
+                    new_filename = f"{new_name}.json"
+                    json_loc = os.path.join(dir_name, new_filename)
+                    file.save(json_loc)
 
-                input_check = fasta_check(fasta_loc)
+                if afv == 2:
+                    input_check = fasta_check(fasta_loc)
+                elif afv == 3:
+                    input_check = json_check(json_loc)
                 if input_check == 1:
+                    flash("Invalid JSON formatting")
                     os.system(f"rm -r {dir_name}")
                     remove_token_after_crash(token)
-                    return redirect(url_for("error"))
+                    return redirect(url_for("upload"))
                 elif input_check == 2:
                     os.system(f"rm -r {dir_name}")
                     remove_token_after_crash(token)
@@ -189,48 +211,56 @@ def create_app():
                     remove_token_after_crash(token)
                     return redirect(url_for("exceeded"))
 
-                # check and get the additional_settings for colabfold
-                nmodels_in = request.form.get("num_models")
-                nm_check, sec_nmodels_in = allowed_string(
-                    nmodels_in, info="Invalid number of models"
-                )
-                if not nm_check:
-                    remove_token_after_crash(token)
-                    return redirect(url_for("upload"))
-
-                amberrel_in = request.form.get("amber_relax")
-                if amberrel_in is not None:
-                    ar_check, sec_amberrel_in = allowed_string(
-                        amberrel_in, info="Invalid amber relax"
+                if afv ==2:
+                    # check and get the additional_settings for colabfold
+                    nmodels_in = request.form.get("num_models")
+                    nm_check, sec_nmodels_in = allowed_string(
+                        nmodels_in, info="Invalid number of models"
                     )
-                    if not ar_check:
+                    if not nm_check:
                         remove_token_after_crash(token)
                         return redirect(url_for("upload"))
-                else:
-                    sec_amberrel_in = amberrel_in
 
-                ncycles_in = request.form.get("num_recycles")
-                nc_check, sec_ncycles_in = allowed_string(
-                    ncycles_in, info="Invalid number of recycles"
-                )
-                if not nc_check:
-                    remove_token_after_crash(token)
-                    return redirect(url_for("upload"))
+                    amberrel_in = request.form.get("amber_relax")
+                    if amberrel_in is not None:
+                        ar_check, sec_amberrel_in = allowed_string(
+                            amberrel_in, info="Invalid amber relax"
+                        )
+                        if not ar_check:
+                            remove_token_after_crash(token)
+                            return redirect(url_for("upload"))
+                    else:
+                        sec_amberrel_in = amberrel_in
 
-                additional_settings = add_string(
-                    sec_nmodels_in, sec_amberrel_in, sec_ncycles_in
-                )
-                # generate commands that should be executed
-                cfold_out = os.path.join(dir_name, "out")
-                colabfold_path = FILE_PATHS["colabfold_path"]
-                folding = (
-                    f"{colabfold_path} {fasta_loc} {cfold_out} {additional_settings}"
-                )
-                zipout = f"{FILE_PATHS['python_path']} {FILE_PATHS['loc_prod_path']}/zipping.py -f {dir_name} -d {dir_name}"
+                    ncycles_in = request.form.get("num_recycles")
+                    nc_check, sec_ncycles_in = allowed_string(
+                        ncycles_in, info="Invalid number of recycles"
+                    )
+                    if not nc_check:
+                        remove_token_after_crash(token)
+                        return redirect(url_for("upload"))
+
+                    additional_settings = add_string(
+                        sec_nmodels_in, sec_amberrel_in, sec_ncycles_in
+                    )
+                    # generate commands that should be executed
+                    cfold_out = os.path.join(dir_name, "out")
+                    colabfold_path = FILE_PATHS["colabfold_path"]
+                    folding = (
+                        f"{colabfold_path} {fasta_loc} {cfold_out} {additional_settings} 2>&1 | tee {dir_name}/log.file"
+                    )
+                elif afv == 3:
+                    cfold_out = os.path.join(dir_name, "out")
+                    colabfold_path = FILE_PATHS["colabfold_path"]
+                    folding=f"{FILE_PATHS['docker_path']} run --volume {dir_name}:/root/af_input --volume {cfold_out}:/root/af_output --volume {FILE_PATHS['weights_path']}:/root/models --volume {FILE_PATHS['db_path']}:/root/public_databases --gpus all alphafold3 python run_alphafold.py --json_path=/root/af_input/{os.path.basename(json_loc)} --model_dir=/root/models --output_dir=/root/af_output 2>&1 | tee {dir_name}/log.file"
+
+                zipout = f"{FILE_PATHS['python_path']} {FILE_PATHS['loc_prod_path']}/zipping.py -f {dir_name} -d {dir_name} -b {dir_name}"
                 token_removing = f"{FILE_PATHS['python_path']} {FILE_PATHS['loc_prod_path']}/tokenremove.py --token {token}"
+                time_start = f"echo \"START $(date +%Y-%m-%d_%H:%M:%S)\" > {dir_name}/prediction_time.txt"
+                time_end = f"echo \"END   $(date +%Y-%m-%d_%H:%M:%S)\" >> {dir_name}/prediction_time.txt"
 
                 # create bash file to execute the folding and submit job
-                make_bash_file(new_name, [folding, zipout, token_removing])
+                make_bash_file(new_name, [time_start, folding, time_end, zipout, token_removing])
 
                 return redirect(url_for("submitted"))
             else:
@@ -303,7 +333,7 @@ def create_app():
     def example():
         ip_log(request, "example")
         return render_template(
-            "example.html", files=[i for i in os.listdir("example") if ".fasta" in i]
+            "example.html", files=[i for i in os.listdir("example") if ".fasta" or ".json" in i]
         )
 
     @app.route("/example/<filename>")
