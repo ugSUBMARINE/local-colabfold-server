@@ -22,7 +22,7 @@ from app_utils import (
     remove_token_after_crash,
     add_string,
     ip_log,
-    file_path_dict
+    file_path_dict,
 )
 from make_bash import make_bash_file
 
@@ -43,7 +43,7 @@ def create_app():
         os.mkdir(out_dir)
 
     # clear used tokens on app startup
-    with open(f"{FILE_PATHS['loc_prod_path']}/tokens/used_tokens.txt", "w+") as utok:
+    with open(f"{FILE_PATHS['loc_prod_path']}/tokens/used_tokens.txt", "w+"):
         pass
 
     # generates secret_key if not present
@@ -75,9 +75,11 @@ def create_app():
                 if ci == 0:
                     if len(i) > 0 and "~~" in i:
                         start_date = ".".join(i.split("~~")[1].split("-")[:3][::-1])
-                n_lines +=1
+                n_lines += 1
         ip_log(request, "home")
-        return render_template("index.html", number=num_proc, start_date=start_date,n_jobs=n_lines)
+        return render_template(
+            "index.html", number=num_proc, start_date=start_date, n_jobs=n_lines
+        )
 
     @app.route("/busy")
     def busy():
@@ -180,7 +182,7 @@ def create_app():
                 dir_name = os.path.join(user_path, new_name)
                 os.mkdir(dir_name)
                 afv = 3
-                if os.path.splitext(filename_in)[-1].replace(".","").startswith("fa"):
+                if os.path.splitext(filename_in)[-1].replace(".", "").startswith("fa"):
                     afv = 2
                 if afv == 2:
                     # save fasta file
@@ -211,7 +213,7 @@ def create_app():
                     remove_token_after_crash(token)
                     return redirect(url_for("exceeded"))
 
-                if afv ==2:
+                if afv == 2:
                     # check and get the additional_settings for colabfold
                     nmodels_in = request.form.get("num_models")
                     nm_check, sec_nmodels_in = allowed_string(
@@ -246,21 +248,21 @@ def create_app():
                     # generate commands that should be executed
                     cfold_out = os.path.join(dir_name, "out")
                     colabfold_path = FILE_PATHS["colabfold_path"]
-                    folding = (
-                        f"{colabfold_path} {fasta_loc} {cfold_out} {additional_settings} 2>&1 | tee {dir_name}/log.file"
-                    )
+                    folding = f"{colabfold_path} {fasta_loc} {cfold_out} {additional_settings} 2>&1 | tee {dir_name}/log.file"
                 elif afv == 3:
                     cfold_out = os.path.join(dir_name, "out")
                     colabfold_path = FILE_PATHS["colabfold_path"]
-                    folding=f"{FILE_PATHS['docker_path']} run --volume {dir_name}:/root/af_input --volume {cfold_out}:/root/af_output --volume {FILE_PATHS['weights_path']}:/root/models --volume {FILE_PATHS['db_path']}:/root/public_databases --gpus all alphafold3 python run_alphafold.py --json_path=/root/af_input/{os.path.basename(json_loc)} --model_dir=/root/models --output_dir=/root/af_output 2>&1 | tee {dir_name}/log.file"
+                    folding = f"{FILE_PATHS['docker_path']} run --volume {dir_name}:/root/af_input --volume {cfold_out}:/root/af_output --volume {FILE_PATHS['weights_path']}:/root/models --volume {FILE_PATHS['db_path']}:/root/public_databases --gpus all alphafold3 python run_alphafold.py --json_path=/root/af_input/{os.path.basename(json_loc)} --model_dir=/root/models --output_dir=/root/af_output 2>&1 | tee {dir_name}/log.file"
 
                 zipout = f"{FILE_PATHS['python_path']} {FILE_PATHS['loc_prod_path']}/zipping.py -f {dir_name} -d {dir_name}"
                 token_removing = f"{FILE_PATHS['python_path']} {FILE_PATHS['loc_prod_path']}/tokenremove.py --token {token}"
-                time_start = f"echo \"START $(date +%Y-%m-%d_%H:%M:%S)\" > {dir_name}/prediction_time.txt"
-                time_end = f"echo \"END   $(date +%Y-%m-%d_%H:%M:%S)\" >> {dir_name}/prediction_time.txt"
+                time_start = f'echo "START $(date +%Y-%m-%d_%H:%M:%S)" > {dir_name}/prediction_time.txt'
+                time_end = f'echo "END   $(date +%Y-%m-%d_%H:%M:%S)" >> {dir_name}/prediction_time.txt'
 
                 # create bash file to execute the folding and submit job
-                make_bash_file(new_name, [time_start, folding, time_end, zipout, token_removing])
+                make_bash_file(
+                    new_name, [time_start, folding, time_end, zipout, token_removing]
+                )
 
                 return redirect(url_for("submitted"))
             else:
@@ -333,7 +335,8 @@ def create_app():
     def example():
         ip_log(request, "example")
         return render_template(
-            "example.html", files=[i for i in os.listdir("example") if ".fasta" or ".json" in i]
+            "example.html",
+            files=[i for i in os.listdir("example") if ".fasta" or ".json" in i],
         )
 
     @app.route("/example/<filename>")

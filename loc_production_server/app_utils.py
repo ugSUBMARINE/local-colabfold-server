@@ -119,6 +119,7 @@ def fasta_check(fasta_path: str, max_protein: int = 3, max_seqlen=2500) -> int:
         return 2
     return 0
 
+
 def protein_check(data: dict) -> int:
     """
     check how many amino acids are in a AF3 dict
@@ -142,7 +143,15 @@ def protein_check(data: dict) -> int:
         elif "ligand" in i.keys():
             i_lig = i["ligand"]
             if "smiles" in i_lig.keys():
-                i_smiles = i_lig["smiles"].replace("(", "").replace(")", "").replace("[", "").replace("]", "").replace("_", "").replace(".", "")
+                i_smiles = (
+                    i_lig["smiles"]
+                    .replace("(", "")
+                    .replace(")", "")
+                    .replace("[", "")
+                    .replace("]", "")
+                    .replace("_", "")
+                    .replace(".", "")
+                )
                 total_len += len(i_smiles)
     return total_len
 
@@ -186,6 +195,7 @@ def json_check(path: str, max_seqlen: int = 3500, max_protein: int = 3) -> int:
                 return 3
         else:
             return 1
+
 
 def remove_token_after_crash(token_in: str) -> None:
     """remove token from in used ones on invalid input
