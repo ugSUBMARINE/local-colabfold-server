@@ -76,6 +76,10 @@ The account you install everything on should be a non admin account.
   +   One token can only queue **3 jobs** so the server can't get overfilled with requests
   +   The server accepts only **10 queued jobs** - after that new submissions will be blocked until less than 10 jobs are queued
       +   this can be changed in https://github.com/ugSUBMARINE/local-colabfold-server/blob/6752cbb9cc7b0f463e063f763d6b68956f139605/loc_production_server/pre_app.py#L32-L33
+  +   One json file can only contain a maximum of **3 sequence (header)** and a maximum of **3500 amino acids**
+      +   at https://github.com/ugSUBMARINE/local-colabfold-server/blob/b8f8a55fefb4a13ae405c4aafa195f44535fa423/loc_production_server/pre_app.py#L201
+      +   the number of sequences can be changed with adding ` ,max_protein=N` 
+      +   the number of amino acids can be changed with adding ` ,max_seqlen=L`
   +   One fasta file can only contain a maximum of **3 sequence (header)** and a maximum of **2500 amino acids**
       +   at https://github.com/ugSUBMARINE/local-colabfold-server/blob/6752cbb9cc7b0f463e063f763d6b68956f139605/loc_production_server/pre_app.py#L164
       +   the number of sequences can be changed with adding ` ,max_protein=N` 
@@ -87,6 +91,7 @@ There are several log files that get created to monitor what's happening (assumi
     *   at `storage_path/.shutdown` :
         -   `machinestartup` : contains the date when the computer was started
         -   `serverstartup` : contains the date and whether the start of the web interface succeded or not
+        -   `app.pid` : contains the PID of the master process of  gunicorn
     *   at `loc_prod_path/log_files` :
         -   `app.pid` : contains the PID of the master process of  gunicorn
         -   `error.log` : contains error and info about processes on the web interface
