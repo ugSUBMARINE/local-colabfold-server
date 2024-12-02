@@ -11,6 +11,7 @@ document.getElementById("wholebody").className = "stormtrooper";
 <div>There is/are <strong>currently <a value="{{number}}">{{number}}</a> job(s) in the pipeline</strong></div><br />
 <!-- <iframe src="https://giphy.com/embed/SiEz6hxdcJuOf2n3TE" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe> -->
 <iframe src="https://giphy.com/embed/Nx0rz3jtxtEre" width="480" height="240" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
-<div>Since <strong><a value="{{start_date}}">{{start_date}}</a> <a value="{{n_jobs}}">{{n_jobs}}</a></strong>  proteins were folded</div><br />
+<div>Since <strong><a value="{{start_date}}">{{start_date}}</a> <a value="{{n_jobs}}">{{n_jobs}}</a></strong>  proteins structures were predicted</div><br />
+<img src="{{url_for('static', filename='server_stats.png')}}" alt="Server usage statistics" width="500" height="800">
 </div>
 {% endblock %}
