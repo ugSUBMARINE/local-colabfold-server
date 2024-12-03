@@ -64,6 +64,10 @@ def get_stats(log_file: str, storage_path: str):
                 dates.append("-".join(i_interest[0:2][::-1]))
                 clock.append(int(i_interest[3]) + round(int(i_interest[4]) / 60))
     date, n_date = np.unique(dates, return_counts=True)
+    date_dict = dict(zip(date, n_date))
+    date = sorted(date, key=lambda x: (x.split("-")[1], x.split("-")[0]))
+    n_date = [date_dict[i] for i in date]
+
     hours, n_hours = np.unique(clock, return_counts=True)
     target_hours = dict(zip(list(range(24)), [np.int64(0) for i in range(24)]))
     for h, nh in zip(hours, n_hours):
