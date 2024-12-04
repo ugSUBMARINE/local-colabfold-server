@@ -31,7 +31,7 @@ def plot_server_usage(
     ax1.set_theta_direction(-1)
     ax1.set_xticks(np.linspace(0, 2 * np.pi, 24, endpoint=False))
     ax1.set_xticklabels([f"{i:02d}:00" for i in range(24)])
-    ax1.set_title("Average Server Usage Over 24 Hours")
+    ax1.set_title("Server Usage Over 24 Hours")
 
     # Plot 2: Line plot for monthly data
     ax2 = plt.subplot(212)
