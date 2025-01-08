@@ -9,7 +9,18 @@ document.getElementById("wholebody").className = "vader_show";
 <div style="font-size:100px">&#x1F9EB</div>
 <div class="quote">"I know how to run without you holding my hand." - Rey</div><br />
 <div style="align-content: center">
-{% for filename in files %}
+{% for filename in files_fasta %}
+<a class="link" href="{{ url_for("example_file", filename=filename) }}">{{ filename }}</a><br />
+{% endfor %}
+</div>
+<div style="align-content: center">
+{% for filename in files_json %}
+<a class="link" href="{{ url_for("example_file", filename=filename) }}">{{ filename }}</a><br />
+{% endfor %}
+</div>
+<br />
+<div style="align-content: center">
+{% for filename in files_html %}
 <a class="link" href="{{ url_for("example_file", filename=filename) }}">{{ filename }}</a><br />
 {% endfor %}
 </div>

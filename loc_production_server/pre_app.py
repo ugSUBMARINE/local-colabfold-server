@@ -336,7 +336,9 @@ def create_app():
         ip_log(request, "example")
         return render_template(
             "example.html",
-            files=[i for i in os.listdir("example") if ".fasta" or ".json" in i],
+            files_fasta=[i for i in os.listdir("example") if ".fasta" in i],
+            files_json=[i for i in os.listdir("example") if ".json" in i],
+            files_html=[i for i in os.listdir("example") if ".html" in i],
         )
 
     @app.route("/example/<filename>")

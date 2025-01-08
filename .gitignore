@@ -1,6 +1,7 @@
 registered_tokens.txt
 used_tokens.txt
-loc_production_server/__pycache__
+__pycache__/
 schedule/
 log_files/
 server_stats.png
+*.swp
