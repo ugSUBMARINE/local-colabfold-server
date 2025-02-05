@@ -1,5 +1,6 @@
 registered_tokens.txt
 used_tokens.txt
+tokens/
 __pycache__/
 schedule/
 log_files/

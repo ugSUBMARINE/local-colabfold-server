@@ -198,7 +198,7 @@ def create_app():
                 if afv == 2:
                     input_check = fasta_check(fasta_loc)
                 elif afv == 3:
-                    input_check = json_check(json_loc)
+                    input_check = json_check(json_loc, max_seqlen=10000)
                 if input_check == 1:
                     flash("Invalid JSON formatting")
                     os.system(f"rm -r {dir_name}")
@@ -249,10 +249,12 @@ def create_app():
                     cfold_out = os.path.join(dir_name, "out")
                     colabfold_path = FILE_PATHS["colabfold_path"]
                     folding = f"{colabfold_path} {fasta_loc} {cfold_out} {additional_settings} 2>&1 | tee {dir_name}/log.file"
+                    git_hash = "echo 'No git hash available'"
                 elif afv == 3:
                     cfold_out = os.path.join(dir_name, "out")
                     colabfold_path = FILE_PATHS["colabfold_path"]
                     folding = f"{FILE_PATHS['docker_path']} run --volume {dir_name}:/root/af_input --volume {cfold_out}:/root/af_output --volume {FILE_PATHS['weights_path']}:/root/models --volume {FILE_PATHS['db_path']}:/root/public_databases --gpus all alphafold3 python run_alphafold.py --json_path=/root/af_input/{os.path.basename(json_loc)} --model_dir=/root/models --output_dir=/root/af_output 2>&1 | tee {dir_name}/log.file"
+                    git_hash = f"{FILE_PATHS['python_path']} {FILE_PATHS['loc_prod_path']}/git_hash_log.py --log_path {dir_name}/log.file"
 
                 zipout = f"{FILE_PATHS['python_path']} {FILE_PATHS['loc_prod_path']}/zipping.py -f {dir_name} -d {dir_name}"
                 token_removing = f"{FILE_PATHS['python_path']} {FILE_PATHS['loc_prod_path']}/tokenremove.py --token {token}"
@@ -261,7 +263,7 @@ def create_app():
 
                 # create bash file to execute the folding and submit job
                 make_bash_file(
-                    new_name, [time_start, folding, time_end, zipout, token_removing]
+                    new_name, [time_start, folding, time_end, git_hash, zipout, token_removing]
                 )
 
                 return redirect(url_for("submitted"))

@@ -269,3 +269,4 @@ def file_path_dict() -> dict:
                 if len(i_split[0]) > 0:
                     path_dict[i_split[0]] = ":".join(i_split[1:])
         return path_dict
+

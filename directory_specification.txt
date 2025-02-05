@@ -8,3 +8,4 @@ loc_prod_path:/home/cfolding/local-colabfold-server/loc_production_server
 docker_path:/usr/bin/docker
 weights_path:/mnt/ssd1/alphafold3/weights
 db_path:/mnt/ssd1/alphafold3/databases
+git_path:/home/cfolding/AF3/alphafold3

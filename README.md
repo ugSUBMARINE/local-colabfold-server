@@ -29,6 +29,7 @@ The account you install everything on should be a non admin account.
     *   `docker_path` : The path to the alphafold 3 docker container with an `alphafold3` image
     *   `weights_path` : The path to the alphafold 3 weights
     *   `db_path` : The path to the alphafold 3 data base
+    *   `git_path` : The path to the alphafold 3 git repository
 *   Add cronjobs with [crontab](https://www.man7.org/linux/man-pages/man1/crontab.1.html) to continuously check for jobs to execute
     * MINIMUM NEEDED CRONJOB
         * This checks every minute whether there is a job to run or not
@@ -82,7 +83,7 @@ The account you install everything on should be a non admin account.
   +   One token can only queue **3 jobs** so the server can't get overfilled with requests
   +   The server accepts only **10 queued jobs** - after that new submissions will be blocked until less than 10 jobs are queued
       +   this can be changed in https://github.com/ugSUBMARINE/local-colabfold-server/blob/6752cbb9cc7b0f463e063f763d6b68956f139605/loc_production_server/pre_app.py#L32-L33
-  +   One json file can only contain a maximum of **3 sequence (header)** and a maximum of **3500 amino acids**
+  +   One json file can only contain a maximum of **3 sequence (header)** and a maximum of **10000 amino acids**
       +   at https://github.com/ugSUBMARINE/local-colabfold-server/blob/b8f8a55fefb4a13ae405c4aafa195f44535fa423/loc_production_server/pre_app.py#L201
       +   the number of sequences can be changed with adding ` ,max_protein=N` 
       +   the number of amino acids can be changed with adding ` ,max_seqlen=L`
