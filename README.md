@@ -36,22 +36,24 @@ The account you install everything on should be a non admin account.
            * `* * * * * /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log 2>&1`
     * RECOMMENDED cronjob setup instead of the MINIMUM
         * set checks for jobs to be executed 
-           * `* 7-20 * * 1-5 /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log 2>&1`
-           * `30 20-23 * * 1-5 /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log 2>&1`
-           * `59 0-7 * * 1-5 /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log 2>&1`
-           * `30 * * * 6,0 /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log 2>&1`
+            * `* 7-20 * * 1-5 /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log 2>&1`
+            * `30 20-23 * * 1-5 /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log 2>&1`
+            * `59 0-7 * * 1-5 /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log 2>&1`
+            * `30 * * * 6,0 /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/execution.log 2>&1`
         * start the web interface on server start  
-           * `@reboot /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run_on_start.sh >> /mnt/ssd1/.shutdown/startup.log 2>&1`
+            * `@reboot /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run_on_start.sh >> /mnt/ssd1/.shutdown/startup.log 2>&1`
 
         * restarts the the web interface upon crash
-           * `0,15,30,45 7-19 * * * if ! ps -p $(cat /home/cfolding/local-colabfold-server/loc_production_server/log_files/app.pid) > /dev/null;then /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run_on_start.sh >> /mnt/ssd1/.shutdown/startup.lo g; fi`
+            * `0,15,30,45 7-19 * * * if ! ps -p $(cat /home/cfolding/local-colabfold-server/loc_production_server/log_files/app.pid) > /dev/null;then /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/run_on_start.sh >> /mnt/ssd1/.shutdown/startup.lo g; fi`
         * create a new usage plot
-           * `0 2 * * * /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/plot.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/plot.log 2>&1`
+            * `0 2 * * * /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/plot.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/plot.log 2>&1`
         * backup all logfiles and the schedule
-           * `0 2 * * * /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/backup.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/backup.log 2>&1`
-         * delete files after 1 week - if you are running alphafold 3 and want the file removal to work you need to create the cronjob with `sudo crontab -e` because docker creates all files as root so you need sudo permissions to remove them - **BE CAREFULL** to have the right paths configured - otherwise you might delete things you don't want/should delete
-           * `0 2 * * * /home/cfolding/local-colabfold-server/loc_production_server/clean.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/file_clean.log 2>&1`
-           * `0 * * * * /home/cfolding/localcolabfold/colabfold-conda/bin/python3 /home/cfolding/local-colabfold-server/loc_production_server/clean_iplog.py 2>&1`
+            * `0 2 * * * /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/backup.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/backup.log 2>&1`
+        * delete files after 1 week - if you are running alphafold 3 and want the file removal to work you need to create the cronjob with `sudo crontab -e` because docker creates all files as root so you need sudo permissions to remove them - **BE CAREFULL** to have the right paths configured - otherwise you might delete things you don't want/should delete
+            * `0 2 * * * /home/cfolding/local-colabfold-server/loc_production_server/clean.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/file_clean.log 2>&1`
+            * `0 * * * * /home/cfolding/localcolabfold/colabfold-conda/bin/python3 /home/cfolding/local-colabfold-server/loc_production_server/clean_iplog.py 2>&1`
+        * stop docker runs longer than 3 days
+            * `0 * * * * /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/check_docker.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/docker_guard.log 2>&1`
 *   These file paths need to be changed so the paths can be figured out - you will need to change the "/home/cfolding/" part of the links
     https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/app_utils.py#L176
     https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/clean.sh#L4
