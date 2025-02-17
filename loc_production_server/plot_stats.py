@@ -30,7 +30,7 @@ def plot_server_usage(
     ax1.set_theta_offset(np.pi / 2)
     ax1.set_theta_direction(-1)
     ax1.set_xticks(np.linspace(0, 2 * np.pi, 24, endpoint=False))
-    ax1.set_yticks(np.linspace(0, np.max(values), 5, endpoint=False))
+    ax1.set_yticks(np.round(np.linspace(0, np.max(values), 5, endpoint=False)))
     ax1.set_xticklabels([f"{i:02d}:00" for i in range(24)])
     ax1.set_title("Server Usage Over 24 Hours")
 
@@ -43,7 +43,7 @@ def plot_server_usage(
         color="darkorange",
         linewidth=2,
         marker="^",
-        mec="black"
+        mec="black",
     )
     ax2.set_xlabel("Months")
     ax2.set_ylabel("Predictions")
@@ -51,7 +51,7 @@ def plot_server_usage(
     ax2.spines["top"].set_visible(False)
     ax2.spines["right"].set_visible(False)
     xticks_ax2 = ax2.get_xticks()
-    ax2.set_xticks(xticks_ax2[::len(xticks_ax2)//7])
+    ax2.set_xticks(xticks_ax2[:: len(xticks_ax2) // 7])
     ax2.tick_params(axis="x", rotation=45)
 
     plt.tight_layout()
@@ -82,10 +82,17 @@ def get_stats(log_file: str, storage_path: str):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input", type=str, help="path to log file")
     parser.add_argument(
-        "-o", "--output", type=str, help="path where the files should be stored"
+        "-i", "--input", type=str, required=True, help="path to log file"
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        required=True,
+        help="path where the files should be stored",
     )
     args = parser.parse_args()
 
     plot_server_usage(*get_stats(args.input, args.output))
+
