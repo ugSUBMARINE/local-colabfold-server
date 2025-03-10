@@ -143,7 +143,7 @@ def protein_check(data: dict) -> int:
         elif "ligand" in i.keys():
             i_lig = i["ligand"]
             if "smiles" in i_lig.keys():
-                total_len += len(i_smiles)
+                total_len += len(i_lig["smiles"].replace("(","").replace(")",""))
     return total_len
 
 
