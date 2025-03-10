@@ -98,17 +98,21 @@ The account you install everything on should be a non admin account.
 There are several log files that get created to monitor what's happening (assuming the server gets started with `run_on_start.sh`)
 *   on startup
     *   at `storage_path/.shutdown` :
-        -   `machinestartup` : contains the date when the computer was started
-        -   `serverstartup` : contains the date and whether the start of the web interface succeded or not
-        -   `app.pid` : contains the PID of the master process of  gunicorn
+        -   `machinestartup` : date when the computer was started
+        -   `serverstartup` : date and whether the start of the web interface succeded or not
+        -   `app.pid` : PID of the master process of  gunicorn
     *   at `loc_prod_path/log_files` :
-        -   `app.pid` : contains the PID of the master process of  gunicorn
-        -   `error.log` : contains error and info about processes on the web interface
+        -   `app.pid` : PID of the master process of  gunicorn
+        -   `error.log` : error and info about processes on the web interface
 *   during production
     *   at `loc_prod_path/log_files` :
-        -   `error.log` : contains error and info about processes on the web interface
-        -   `execution.log` : contains all system output written by the running scripts/program/colabfold/...
-        -   `ip.log` : contains which ip address visited which route
+        -   `error.log` : error and info about processes on the web interface
+        -   `execution.log` : all system output written by the running scripts/program/colabfold/...
+        -   `ip.log` : which ip address visited which route
+        -   `backup.log` : creation of the backup files
+        -   `docker_guard.log` : docker stopping jobs longer than 72h
+        -   `file_clean.log` : removing files older than threshold
+        -   `plot.log` : plotting usage statistic
     *   at `loc_prod_path/schedule` :
         -   `log.file` : which driver bash script was executed when and what was the return value
 
