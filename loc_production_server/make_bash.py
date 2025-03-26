@@ -8,7 +8,7 @@ from app_utils import file_path_dict
 FILE_PATHS = file_path_dict()
 
 
-def make_bash_file(name: str, lines: list[str]):
+def make_bash_file(name: str, lines: list[str]) -> str:
     """
     generate bash scripts that should be executed
     :parameter
@@ -38,12 +38,13 @@ def make_bash_file(name: str, lines: list[str]):
     # add bash script to queue
     exe_shed_path = f"{base_path}execution_shedule.txt"
     if not os.path.isfile(exe_shed_path):
-        with open(exe_shed_path, "a+") as ef:
+        with open(exe_shed_path, "a+"):
             pass
         os.system(f"chmod +rw {exe_shed_path}")
         os.system(f"chmod o+w {exe_shed_path}")
     with open(exe_shed_path, "a+") as exe_shed:
         exe_shed.write("LOCKED " + new_name + "\n")
+    return new_name
 
 
 if __name__ == "__main__":

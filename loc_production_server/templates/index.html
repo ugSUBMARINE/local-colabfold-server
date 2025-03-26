@@ -2,16 +2,74 @@
 
 {% block content %}
 <script>
+document.addEventListener("DOMContentLoaded", function() {
+  function update() {
+    fetch('/api/usage')
+      .then(response => response.json())
+      .then(data => {
+        updateProgressBar('cpu', 'cpuValue', data.cpu);
+        updateProgressBar('gpu', 'gpuValue', data.gpu);
+        updateProgressBar('ram', 'ramValue', data.ram);
+        updateJobName(data.current_job);
+      })
+      .catch(error => console.error('Error fetching usage data:', error));
+  }
+
+  function updateProgressBar(progressBarId, valueId, value) {
+    const progressBar = document.getElementById(progressBarId);
+    const valueElement = document.getElementById(valueId);
+    progressBar.value = value;
+    valueElement.innerText = value + '%';
+
+    let color;
+    if (value < 50) {
+      color = "#008000";
+    } else if (value < 80) {
+      color = "#e68a00";
+    } else {
+      color = "#cc2900";
+    }
+    progressBar.style.setProperty('--color', color);
+  }
+  function updateJobName(jobName) {
+    const jobNameElement = document.getElementById('jobName');
+    jobNameElement.innerText = jobName;
+  }
+  setInterval(update, 120000);
+  update();
+});
+</script>
+<script>
 document.getElementById("wholebody").className = "stormtrooper";
 </script>
 <div class="surround">
 <h1>Strubi Local Fold Server</h1>
 <div style="font-size:100px">👨‍🚀</div>
 <div class="quote">"Do or do not. There is no try." - Yoda</div><br />
-<div>There is/are <strong>currently <a value="{{number}}">{{number}}</a> job(s) in the pipeline</strong></div><br />
+<div>There is/are <strong>currently <a value="{{number}}">{{number}}</a> job(s) queued</strong></div><br />
 <!-- <iframe src="https://giphy.com/embed/SiEz6hxdcJuOf2n3TE" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe> -->
 <iframe src="https://giphy.com/embed/Nx0rz3jtxtEre" width="480" height="240" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
 <div>Since <strong><a value="{{start_date}}">{{start_date}}</a> <a value="{{n_jobs}}">{{n_jobs}}</a></strong>  protein structures were predicted</div><br />
+<!-- Progress bars for CPU, GPU, and RAM usage -->
+<div class="load">
+  <h3>Current Server Load</h3>
+<div id="jobName"></div>
+  <div class="progress-container">
+    <label for="cpu" class="progress-label">CPU:</label>
+    <progress id="cpu" value="0" max="100"></progress>
+    <span id="cpuValue">0%</span>
+  </div>
+  <div class="progress-container">
+    <label for="gpu" class="progress-label">GPU:</label>
+    <progress id="gpu" value="0" max="100"></progress>
+    <span id="gpuValue">0%</span>
+  </div>
+  <div class="progress-container">
+    <label for="ram" class="progress-label">RAM:</label>
+    <progress id="ram" value="0" max="100"></progress>
+    <span id="ramValue">0%</span>
+  </div>
+</div>
 <img src="{{url_for('static', filename='server_stats.png')}}" alt="Server usage statistics" width="500" height="800">
 </div>
 {% endblock %}

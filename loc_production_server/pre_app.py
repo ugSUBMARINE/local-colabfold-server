@@ -1,4 +1,5 @@
 import os
+import hashlib
 from flask import (
     Flask,
     request,
@@ -27,6 +28,10 @@ from app_utils import (
 from make_bash import make_bash_file
 
 FILE_PATHS = file_path_dict()
+
+def hash_job(bash_file_path: str) -> str:
+    name = bash_file_path.strip().split(" ")[-1]
+    return hashlib.md5(name.encode()).hexdigest()[:10]
 
 
 def create_app():
@@ -66,8 +71,6 @@ def create_app():
             num_proc = sum(1 for line in open(sched_path))
         else:
             num_proc = 0
-        if num_proc >= max_jobs:
-            return redirect(url_for("busy"))
         start_date = "01.01.1970"
         n_lines = 0
         with open("./schedule/log.file", "r") as lfile:
@@ -80,6 +83,80 @@ def create_app():
         return render_template(
             "index.html", number=num_proc, start_date=start_date, n_jobs=n_lines
         )
+
+    @app.route("/api/usage")
+    def get_usage():
+        sched_path = f"{os.path.join(schedule_dir, 'execution_shedule.txt')}"
+        current_run = ""
+        with open(sched_path, "r") as f:
+            now = f.readline().strip("\n")
+            if len(now) > 0:
+                current_run = hash_job(now)
+        cpu_usage = float(
+            (
+                os.popen(
+                    "top -bn 2 -d 0.01 | grep '^%Cpu' | tail -n 1 | awk '{print $2+$4+$6}'"
+                )
+                .read()
+                .strip()
+                .replace(",", ".")
+            )
+        )
+        try:
+            cpu_usage = int(cpu_usage)
+        except Exception as e:
+            print(e)
+            print(f"Error while checking cpu usage '{cpu_usage}'")
+            cpu_usage = 0
+
+        ram = (
+            os.popen("free -m | awk 'NR==2{printf \"%s %s\", $3,$2 }'")
+            .read()
+            .strip()
+            .split(" ")
+        )
+        if len(ram) != 2:
+            ram_usage = 0
+        else:
+            try:
+                used_ram = int(ram[0])
+                total_ram = int(ram[1])
+                ram_usage = int((used_ram / total_ram) * 100)
+            except Exception as e:
+                print(e)
+                print(f"Error while checking ram usage '{ram_usage}'")
+                ram_usage = 0
+
+        gpu_usage = (
+            os.popen(
+                "nvidia-smi --query-gpu 'utilization.gpu' --format=csv,noheader,nounits"
+            )
+            .read()
+            .strip()
+        )
+        try:
+            gpu_usage = int(gpu_usage)
+        except Exception as e:
+            print(e)
+            print(f"Error while checking gpu usage '{gpu_usage}'")
+            gpu_usage = 0
+        return {
+            "cpu": cpu_usage,
+            "gpu": gpu_usage,
+            "ram": ram_usage,
+            "current_job": current_run,
+        }
+
+    @app.route("/queue")
+    def queue():
+        sched_path = f"{os.path.join(schedule_dir, 'execution_shedule.txt')}"
+        jobs = []
+        with open(sched_path, "r") as sfile:
+            for i in sfile:
+                iname = hash_job(i.split(" ")[-1])
+                jobs.append(iname)
+        ip_log(request, "queue")
+        return render_template("queue.html", jobs=jobs)
 
     @app.route("/busy")
     def busy():
@@ -262,11 +339,11 @@ def create_app():
                 time_end = f'echo "END   $(date +%Y-%m-%d_%H:%M:%S)" >> {dir_name}/prediction_time.txt'
 
                 # create bash file to execute the folding and submit job
-                make_bash_file(
-                    new_name, [time_start, folding, time_end, git_hash, zipout, token_removing]
+                bash_path = make_bash_file(
+                    new_name,
+                    [time_start, folding, time_end, git_hash, zipout, token_removing],
                 )
-
-                return redirect(url_for("submitted"))
+                return render_template("submitted.html", job_hash=hash_job(bash_path))
             else:
                 return redirect(url_for("error"))
         return render_template("upload.html")

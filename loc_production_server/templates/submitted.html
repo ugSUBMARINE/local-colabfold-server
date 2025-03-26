@@ -3,11 +3,25 @@
 {% block content %}
 <script>
 document.getElementById("wholebody").className = "vader_base";
+function copyText() {
+   // navigator.clipboard.writeText(document.getElementById("jhash").innerHTML)
+   var job = document.getElementById("jhash").innerHTML;
+   var inp =document.createElement('input');
+   document.body.appendChild(inp)
+   inp.value = job
+   inp.select();
+   document.execCommand('copy',false);
+   inp.remove();
+}
 </script>
 <div class="surround">
 <h1>You successfully submitted a job</h1>
 <div style="font-size:100px">&#128640</div>
 <div class="quote">"Never tell me the odds." - Han Solo</div><br />
+<div class="hash">
+   <a>Job Hash:</a> <a id="jhash">{{job_hash}} </a><button class="button" onclick="copyText()">Copy</button><br />
+   <a>Save the job hash to find your job in the queue</a><br />
+</div><br />
 <div>When your job is finished it will be available in the <strong><a class="link" href="/download">download</a></strong> page</div>
 <div>The file will have the same name as your input file with the submission date added</div>
 <div>Please check continuously if your protein is ready</div>

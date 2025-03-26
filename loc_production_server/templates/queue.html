@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+document.getElementById("wholebody").className = "vader_show";
+</script>
+
+<div class="surround">
+<h1>Current Job Queue</h1>
+<div style="font-size:100px">&#x231B</div>
+<div class="quote">"I find your lack of faith disturbing" - Darth Vader</div><br />
+<div style="align-content: center">
+{% for filename in jobs %}
+<a value="filename">{{ filename }}</a><br />
+{% endfor %}
+</div>
+{% endblock %}
