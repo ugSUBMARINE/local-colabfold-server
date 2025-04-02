@@ -1,0 +1,15 @@
+{
+  "name": "MonomerLigand",
+  "modelSeeds": [42],
+  "sequences": [
+    {
+      "protein": {
+        "id": "A",
+        "sequence": "MASSHHHHHHSSGLVPRGSTEATAGTVTVNAITSDDVINASEAAGTVAVSGTATGGDIAEGDTVTLEINGETYTTTVDANGEWSVDVAGSDLAADTAFDAVVTSSDAAGNTVDTTGSSTHTVD"
+      }
+    }
+  ],
+  "dialect": "alphafold3",
+  "version": 1
+}
+

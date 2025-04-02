@@ -54,6 +54,8 @@ The account you install everything on should be a non admin account.
             * `0 * * * * /home/cfolding/localcolabfold/colabfold-conda/bin/python3 /home/cfolding/local-colabfold-server/loc_production_server/clean_iplog.py 2>&1`
         * stop docker runs longer than 3 days
             * `0 * * * * /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/check_docker.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/docker_guard.log 2>&1`
+        * update alphafold 3 with latest commits every sunday
+            * `30 0 * * SUN /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/update_af.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/af_update.log 2>&1`
 *   These file paths need to be changed so the paths can be figured out - you will need to change the "/home/cfolding/" part of the links
     https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/app_utils.py#L176
     https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/clean.sh#L4
