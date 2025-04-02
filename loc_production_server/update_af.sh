@@ -14,7 +14,7 @@ fi
 
 echo "BLOCKING" > "$schedule_path"
 
-ls "$loc_prod_path/update/check_update.sh"
+bash "$loc_prod_path/update/check_update.sh"
 
 tail -n+2  "$schedule_path" > "$schedule_path.tmp" 
 mv "$schedule_path.tmp" "$schedule_path" 
