@@ -56,14 +56,20 @@ The account you install everything on should be a non admin account.
             * `0 * * * * /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/check_docker.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/docker_guard.log 2>&1`
         * update alphafold 3 with latest commits every sunday
             * `30 0 * * SUN /bin/bash /home/cfolding/local-colabfold-server/loc_production_server/update_af.sh >> /home/cfolding/local-colabfold-server/loc_production_server/log_files/af_update.log 2>&1`
-*   These file paths need to be changed so the paths can be figured out - you will need to change the "/home/cfolding/" part of the links
-    https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/app_utils.py#L176
-    https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/clean.sh#L4
-    https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/cli_version/add_job.sh#L3
-    https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/run.sh#L3
-    https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/run_on_start.sh#L6
-    https://github.com/ugSUBMARINE/local-colabfold-server/blob/d4d1cbb634e9d080a956863403336fcce05cfe3f/loc_production_server/start_gunicorn.sh#L3
-    https://github.com/ugSUBMARINE/local-colabfold-server/blob/9b7058765478db9e64c423067a94abd4864e3001/loc_production_server/stop_server.sh#L3
+*   These file paths need to be changed so the paths can be figured out - you will need to change the "/home/cfolding/" part of the links to where you store the `directory_specification.txt`:
+      * `backup.sh`
+      * `check_docker.sh`
+      * `clean.sh`
+      * `plot.sh`
+      * `run.sh`
+      * `run_on_start.sh`
+      * `start_gunicorn.sh`
+      * `stop_server.sh`
+      * `update_af.sh`
+      * `app_utils.py`
+      * `cli_version/add_job.sh`
+      * `update/check_update.sh`
+
 *   Run `python loc_production_server/tokengenerator.py` to generate tokens
 *   Run `bash loc_production_server/run_on_start.sh` to start the web interface
 *   Run `bash loc_production_server/stop_server.sh` to stop the web interface
@@ -71,7 +77,8 @@ The account you install everything on should be a non admin account.
 ### The web interface can be used in the following way
 *   Visiting the local IP address through any browser
 *   Reading the guide
-*   Looking at the example fasta files
+*   Taking a look at the queue of queued jobs
+*   Looking at the example fasta or json files
 *   Uploading a fasta file of the protein of interest with:
     *   a user name which creates a folder with the same name in `storage_base` where the results will be stored
     *   a token
@@ -81,7 +88,7 @@ The account you install everything on should be a non admin account.
         * number of recycles
         * whether to use amber relax or not
 *   Downloading the results with the right user name from downloads
-    * This contains a zip file with all the results from colabfold except from the `envs` directory due to its size
+    * This contains a zip file with all the results from colabfold or alphafold3 except from the `envs` directory due to its size
 
 ### Intentional restrictions
   +   One token can only queue **3 jobs** so the server can't get overfilled with requests
