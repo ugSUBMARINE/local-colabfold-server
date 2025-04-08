@@ -78,8 +78,11 @@ if (( $(echo "$prediction_deviation > $threshold" | bc -l) )); then
     echo "New prediction model deviates to much from old one" && exit 1
 fi
 
-echo '>>> creating docker backup image, renaming new image and removing backup image <<<'
+if "$docker_cmd" container ls | grep -q alphafold3_bak;then
+    "$docker_cmd" rmi alphafold3_bak || error_message "ERROR: Failed to remove backup image"
+fi
+
+echo '>>> creating docker backup image and renaming new image <<<'
 "$docker_cmd" tag alphafold3 alphafold3_bak || error_message "ERROR: Failed to rename old image to backup image 'alphafold3_bak'"
 "$docker_cmd" tag alphafold3_new alphafold3 || error_message "ERROR: Failed to rename new image to alphafold command name 'alphafold3'"
 "$docker_cmd" rmi alphafold3_new || error_message "ERROR: Failed to rename new image backoff"
-"$docker_cmd" rmi alphafold3_bak || error_message "ERROR: Failed to remove backup image"
