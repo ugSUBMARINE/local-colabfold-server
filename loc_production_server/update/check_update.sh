@@ -39,10 +39,10 @@ echo '>>> stashing changes, pulling new commits and applying stashed changes <<<
 cd "$git_path" || error_message "ERROR: Failed to change to repository directory"
 pwd
 
-check for new commits
-if [[ $(git rev-parse HEAD) = $(git ls-remote "$(git rev-parse --abbrev-ref '@{u}' | sed 's|/| |g')" | cut -f1) ]];then
+# check for new commits
+if [[ $(git rev-parse HEAD) = $( git ls-remote -q | grep "refs/heads/main" | cut -f1) ]];then
     exit 0
-else 
+else
     date
 fi
 
