@@ -33,7 +33,7 @@ threshold=1.0
 
 # remove unused docker container
 echo '>>> removing unused docker container <<<'
-"$docker_cmd" container prune -af
+"$docker_cmd" container prune -f
 
 echo '>>> stashing changes, pulling new commits and applying stashed changes <<<'
 cd "$git_path" || error_message "ERROR: Failed to change to repository directory"
@@ -57,7 +57,8 @@ echo '>>> creating new docker image <<<'
 
 # make path to store newly predicted structure
 echo '>>> making directory for new predicted reference structure <<<'
-update_struct_path="$storage_path/update"
+now=$(date +%d%m%y)
+update_struct_path="$storage_path/update_${now}"
 if [ ! -d "$update_struct_path" ];then
     mkdir "$update_struct_path" || error_message "ERROR: Failed to create new structure directory"
 fi
