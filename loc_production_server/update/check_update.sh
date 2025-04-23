@@ -79,7 +79,7 @@ if (( $(echo "$prediction_deviation > $threshold" | bc -l) )); then
     echo "New prediction model deviates to much from old one" && exit 1
 fi
 
-if "$docker_cmd" container ls | grep -q alphafold3_bak;then
+if "$docker_cmd" image ls | grep -q alphafold3_bak;then
     "$docker_cmd" rmi alphafold3_bak || error_message "ERROR: Failed to remove backup image"
 fi
 
