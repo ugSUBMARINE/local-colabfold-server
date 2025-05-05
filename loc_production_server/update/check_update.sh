@@ -23,6 +23,7 @@ weights_path=$(grep weights_path "$path_path" | sed 's/.*://')
 db_path=$(grep db_path "$path_path" | sed 's/.*://')
 
 
+date
 a=("$path_path" "$loc_prod_path" "$python_path" "$git_path" "$docker_cmd" "$storage_path" "$weights_path" "$db_path")
 for i in "${a[@]}";do
     test_paths "$i"
@@ -42,8 +43,6 @@ pwd
 # check for new commits
 if [[ $(git rev-parse HEAD) = $( git ls-remote -q | grep "refs/heads/main" | cut -f1) ]];then
     exit 0
-else
-    date
 fi
 
 get the new commits and add stashed changes again
