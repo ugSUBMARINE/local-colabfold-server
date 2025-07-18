@@ -36,16 +36,17 @@ threshold=1.0
 echo '>>> removing unused docker container <<<'
 "$docker_cmd" container prune -f
 
-echo '>>> stashing changes, pulling new commits and applying stashed changes <<<'
 cd "$git_path" || error_message "ERROR: Failed to change to repository directory"
 pwd
 
 # check for new commits
 if [[ $(git rev-parse HEAD) = $( git ls-remote -q | grep "refs/heads/main" | cut -f1) ]];then
+    echo "Already up-to-date"
     exit 0
 fi
 
-get the new commits and add stashed changes again
+echo '>>> stashing changes, pulling new commits and applying stashed changes <<<'
+# get the new commits and add stashed changes again
 git stash || error_message "ERROR: Failed to stash changes"
 git pull origin main || error_message "ERROR: Failed to pull in new changes"
 git stash apply || error_message "ERROR: Failed to apply previous changes"

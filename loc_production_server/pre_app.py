@@ -253,7 +253,7 @@ def create_app():
                     return redirect(url_for("upload"))
                 # add date to filename and cut if to long
                 filename_pre = sec_filename.split(".")[0]
-                sec_filename = "".join(list(filename_pre)[:15])
+                sec_filename = "".join(list(filename_pre)[:30])
                 new_name = f"{sec_filename}_{datetime.now().strftime('%d%m%y_%H%M%S')}"
                 # create output dir
                 dir_name = os.path.join(user_path, new_name)
